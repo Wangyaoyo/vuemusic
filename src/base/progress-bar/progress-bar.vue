@@ -3,9 +3,7 @@
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
       <div class="progress-btn-wrapper" ref="progressBtn"
-           @touchstart.prevent="progressTouchStart"
-           @touchmove.prevent="progressTouchMove"
-           @touchend="progressTouchEnd"
+
       >
         <div class="progress-btn"></div>
       </div>
@@ -16,7 +14,9 @@
 <script type="text/ecmascript-6">
 
   export default {
-
+/*@touchstart.prevent="progressTouchStart"
+           @touchmove.prevent="progressTouchMove"
+           @touchend="progressTouchEnd"*/
   }
 </script>
 

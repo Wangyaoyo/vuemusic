@@ -29,11 +29,11 @@
         </div>
         <div class="bottom">
           <div class="progress-wrapper">
-            <span class="time time-l"></span>
+            <span class="time time-l">{{format(nowTime)}}</span>
             <div class="prograss-bar-wrapper">
-
+              <!-- <ProgressBar></ProgressBar>-->
             </div>
-            <span class="time time-r"></span>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
           <div class="operators">
             <div class="icon i-left">
@@ -83,6 +83,7 @@
   import {mapGetters, mapMutations} from 'vuex'
   import animations from "create-keyframe-animation"
   import {prefixName} from "common/js/dom"
+  import ProgressBar from 'base/progress-bar/progress-bar'
 
   const transform = prefixName('transform')
   export default {
@@ -104,19 +105,21 @@
         //设置两个值才能停止在原位置
         return this.playing ? 'play' : 'play pause'
       },
-      disableCla(){
+      disableCla() {
         return this.songReady ? '' : 'disabled'
       }
     },
     data() {
       return {
-        songReady:false
+        songReady: false,
+        nowTime: 0
       }
     },
     watch: {
       currentSong() {
         this.$nextTick(() => {
           this.$refs.audio.play()
+          console.log(this.currentSong);
         })
       },
       playing(newplay) {
@@ -137,7 +140,7 @@
         this.setPlaying(!this.playing)
       },
       prev() {
-        if(!this.songReady){
+        if (!this.songReady) {
           return
         }
         let index = this.currentIndex - 1
@@ -145,27 +148,39 @@
           index = this.playList.length - 1
         }
         this.setCurrentIndex(index)
-        if(!this.playing){
+        if (!this.playing) {
           this.togglePlay()
         }
         this.songReady = false
       },
       next() {
         let index = this.currentIndex + 1
-        if (index === this.playList.length - 1){
+        if (index === this.playList.length - 1) {
           index = 0
         }
         this.setCurrentIndex(index)
-        if(!this.playing){
+        if (!this.playing) {
           this.togglePlay()
         }
       },
-      ready(){
+      ready() {
         this.songReady = true
       },
-      error(){},
-      updateTime(){
-
+      error() {
+      },
+      updateTime(e) {
+        /* 获取到的是时间戳 */
+        this.nowTime = e.target.currentTime
+      },
+      format(interval) {
+        /* 或0就是向下取整 */
+        interval = interval | 0
+        const minute = interval / 60 | 0
+        const second = interval % 60
+        if (second < 10) {
+          return `${minute}:0${second}`
+        }
+        return `${minute}:${second}`
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale()
@@ -229,6 +244,9 @@
         setPlaying: 'SET_PLAYING',
         setCurrentIndex: 'SET_CURRENT_INDEX'
       })
+    },
+    components: {
+      ProgressBar
     }
   }
 </script>

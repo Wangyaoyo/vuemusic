@@ -1,5 +1,5 @@
 let _uid = ''
-
+/* cookie???? */
 export function getUid() {
   if (_uid) {
     return _uid

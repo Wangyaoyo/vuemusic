@@ -33,7 +33,6 @@
         _getSingerList(){
           getSingerList().then((res) => {
             if(res.code === ERR_OK){
-              console.log(res.data.list)
               this.singerList = this._normalSingers(res.data.list)
             }
           })
@@ -79,7 +78,6 @@
           ret.sort((a,b) => {
             return a.title.charCodeAt(0) - b.title.charCodeAt(0)
           })
-          console.log(hot.concat(ret));
           return hot.concat(ret)
         },
         ...mapMutations({
