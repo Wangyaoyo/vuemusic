@@ -31,7 +31,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{format(nowTime)}}</span>
             <div class="prograss-bar-wrapper">
-              <!-- <ProgressBar></ProgressBar>-->
+              <progress-bar :percent="percent" @percentChange="onProgressChange"></progress-bar>
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
@@ -107,6 +107,9 @@
       },
       disableCla() {
         return this.songReady ? '' : 'disabled'
+      },
+      percent(){
+        return this.nowTime / this.currentSong.duration
       }
     },
     data() {
@@ -181,6 +184,12 @@
           return `${minute}:0${second}`
         }
         return `${minute}:${second}`
+      },
+      onProgressChange(percent){
+        this.$refs.audio.currentTime = percent * this.currentSong.duration
+        if(!this.playing){
+          this.togglePlay()
+        }
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale()

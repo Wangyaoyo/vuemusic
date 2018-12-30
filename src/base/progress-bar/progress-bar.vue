@@ -1,22 +1,82 @@
 <template>
-  <div class="progress-bar" ref="progressBar" @click="progressClick">
+  <div class="progress-bar" ref="progressBar" @click="clickPercent">
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
-      <div class="progress-btn-wrapper" ref="progressBtn"
-
-      >
-        <div class="progress-btn"></div>
+      <div class="progress-btn-wrapper">
+        <div class="progress-btn" ref="progressBtn"
+             @touchstart="progressTouchStart"
+             @touchmove="progressTouchMove"
+             @touchend="progressTouchEnd"
+        ></div>
       </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import {prefixName} from "common/js/dom";
 
+  const transform = prefixName('transform')
   export default {
-/*@touchstart.prevent="progressTouchStart"
-           @touchmove.prevent="progressTouchMove"
-           @touchend="progressTouchEnd"*/
+    props: {
+      percent: {
+        type: Number,
+        default: 0
+      }
+    },
+    data() {
+      return {
+        touch: {}
+      }
+    },
+    watch: {
+      percent(newPercent) {
+        if (newPercent > 0 && !this.touch.initalted) {
+          const barWidth = this.$refs.progressBar.clientWidth - this.$refs.progressBtn.style.width
+          const offset = barWidth * newPercent
+          this._updateProgressWidth(offset)
+        }
+      }
+    },
+    methods: {
+      progressTouchStart(e) {
+        /* 初始化标志 :防止拖动时的跳动 */
+        this.touch.initalted = true
+        /* 第一次点击的位置 */
+        this.touch.startX = e.touches[0].pageX
+        /* 进度条滑过的宽度 */
+        this.touch.progressLeft = this.$refs.progress.clientWidth
+      },
+      progressTouchMove(e) {
+        if (!this.touch.initalted) {
+          return;
+        }
+        const delta = e.touches[0].pageX - this.touch.startX
+        const offset = Math.min(Math.max(this.touch.progressLeft + delta,0 ) ,this.$refs.progressBar.clientWidth)
+
+        this._updateProgressWidth(offset)
+      },
+      progressTouchEnd() {
+        this.touch.initalted = false
+        this.triggerPercent()
+      },
+      clickPercent(e){
+        /* 通过e.offsetX 获取位置 */
+        const offset = e.offsetX
+        this._updateProgressWidth(offset)
+        this.triggerPercent()
+      },
+      /* 通知父组件拖动完成后的percent */
+      triggerPercent() {
+        const percent = this.$refs.progress.clientWidth / (this.$refs.progressBar.clientWidth - this.$refs.progressBtn.style.width)
+        this.$emit('percentChange',percent)
+      },
+      /* 更新进度 */
+      _updateProgressWidth(offset) {
+        this.$refs.progress.style.width = offset + 'px'
+        this.$refs.progressBtn.style[transform] = `translate3d(${offset}px,0,0)`
+      },
+    }
   }
 </script>
 
@@ -25,6 +85,7 @@
 
   .progress-bar
     height: 30px
+    width 230px
     .bar-inner
       position: relative
       top: 13px
