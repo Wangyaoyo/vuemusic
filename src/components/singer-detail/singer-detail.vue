@@ -10,7 +10,7 @@
   import {ERR_OK} from "api/config";
   import {createSong} from "common/js/song"
   import MusicList from "components/music-list/music-list"
-
+  import {processSongsUrl} from "common/js/song";
 
   export default {
     computed: {
@@ -41,7 +41,9 @@
         }
         getDetail(this.singer.id).then((res) => {
           if (res.code === ERR_OK) {
-            this.songs = this._normalizeSong(res.data.list)
+            processSongsUrl(this._normalizeSong(res.data.list)).then((songs)=>{
+              this.songs = songs
+            })
           }
         })
       },

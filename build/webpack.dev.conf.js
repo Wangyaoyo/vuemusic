@@ -16,6 +16,9 @@ const PORT = process.env.PORT && Number(process.env.PORT)
 /* 后端代理：配置路由 发起http请求 */
 const axios = require('axios')
 const express = require('express')
+/* body-parser 过滤解析请求 */
+const bodyParser = require('body-parser')
+
 const app = express()
 var apiRoutes = express.Router()
 app.use('/api', apiRoutes)
@@ -30,9 +33,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   // these devServer options should be customized in /config/index.js
   devServer: {
     before(apiRoutes) {
-      /* body-parser 过滤解析请求 */
-      var bodyParser = require('body-parser')
-      app.use(bodyParser.urlencoded({extend: false}))
+      /* 用来解析req.body的数据 解析成功覆盖原来的req.body,解析失败则为{} */
+      /* extend选项用来配置使用querystring(false)或qs(true)来解析数据*/
+      /* qs比querystring出色的地方在于可以解析多级嵌套的复杂对象（最多5级） */
+      apiRoutes.use(bodyParser.urlencoded({extended:true}))
 
       apiRoutes.get('/api/getDiscList', function (req, res) {
         var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
@@ -46,6 +50,21 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         }).then((response) => {
           res.json(response.data)
         }).catch((e) => {
+          console.log(e);
+        })
+      })
+
+      apiRoutes.post('/api/getPurlUrl',bodyParser.json(),function (req,res) {
+        const url = 'http://u.y.qq.com/cgi-bin/musicu.fcg'
+        axios.post(url,req.body,{
+          headers:{
+            referer:'https://y.qq.com',
+            origin:'https://y.qq.com',
+            'Content-type':'application/x-www-form-urlencoded'
+          }
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e)=>{
           console.log(e);
         })
       })
