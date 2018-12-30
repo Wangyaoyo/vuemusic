@@ -67,7 +67,9 @@
           <p class="desc">{{currentSong.singer}}</p>
         </div>
         <div class="control">
-          <i :class="miniPlayCla" @click.stop="togglePlay"></i>
+          <progress-circle :percent="percent" :radius="radius">
+            <i :class="miniPlayCla" class="icon-mini" @click.stop="togglePlay"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -84,6 +86,7 @@
   import animations from "create-keyframe-animation"
   import {prefixName} from "common/js/dom"
   import ProgressBar from 'base/progress-bar/progress-bar'
+  import ProgressCircle from 'base/progress-circle/progress-circle'
 
   const transform = prefixName('transform')
   export default {
@@ -108,14 +111,15 @@
       disableCla() {
         return this.songReady ? '' : 'disabled'
       },
-      percent(){
+      percent() {
         return this.nowTime / this.currentSong.duration
       }
     },
     data() {
       return {
         songReady: false,
-        nowTime: 0
+        nowTime: 0,
+        radius:32
       }
     },
     watch: {
@@ -185,9 +189,9 @@
         }
         return `${minute}:${second}`
       },
-      onProgressChange(percent){
+      onProgressChange(percent) {
         this.$refs.audio.currentTime = percent * this.currentSong.duration
-        if(!this.playing){
+        if (!this.playing) {
           this.togglePlay()
         }
       },
@@ -255,7 +259,8 @@
       })
     },
     components: {
-      ProgressBar
+      ProgressBar,
+      ProgressCircle
     }
   }
 </script>
