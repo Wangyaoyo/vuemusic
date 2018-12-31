@@ -20,7 +20,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 
 const app = express()
-var apiRoutes = express.Router()
+const apiRoutes = express.Router()
 app.use('/api', apiRoutes)
 
 const devWebpackConfig = merge(baseWebpackConfig, {
@@ -39,7 +39,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       apiRoutes.use(bodyParser.urlencoded({extended:true}))
 
       apiRoutes.get('/api/getDiscList', function (req, res) {
-        var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         axios.get(url, {
           headers: {
             /* 根据访问的网址限制做的一种伪装 */
@@ -65,6 +65,22 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         }).then((response) => {
           res.json(response.data)
         }).catch((e)=>{
+          console.log(e);
+        })
+      })
+
+      apiRoutes.get('/api/lyric', function (req, res) {
+        const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+        axios.get(url, {
+          headers: {
+            /* 根据访问的网址限制做的一种伪装 */
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
           console.log(e);
         })
       })

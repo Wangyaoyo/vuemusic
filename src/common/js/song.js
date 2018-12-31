@@ -1,5 +1,6 @@
 import {getSongUrl} from 'api/song'
 import {ERR_OK} from "api/config";
+import {getLyric} from "api/song";
 
 class Song {
   constructor({id, mid, singer, name, album, duration, image, url}) {
@@ -11,6 +12,14 @@ class Song {
     this.duration = duration
     this.image = image
     this.url = url
+  }
+  /* 抓取歌词数据 */
+  getlyric() {
+    getLyric(this.mid).then((res) => {
+      if (res.retcode === ERR_OK) {
+        this.lyric = res.lyric
+      }
+    })
   }
 }
 
@@ -29,11 +38,11 @@ export function createSong(musicData) {
 
 export function processSongsUrl(songs) {
   return getSongUrl(songs).then((res) => {
-    if(ERR_OK === res.code){
+    if (ERR_OK === res.code) {
       let urlMid = res.url_mid
-      if(urlMid && urlMid.code === ERR_OK){
+      if (urlMid && urlMid.code === ERR_OK) {
         let midUrlInfo = urlMid.data.midurlinfo
-        midUrlInfo.forEach((info,index)=>{
+        midUrlInfo.forEach((info, index) => {
           let song = songs[index]
           song.url = `http://dl.stream.qqmusic.qq.com/${info.purl}`
         })

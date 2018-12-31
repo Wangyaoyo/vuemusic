@@ -134,6 +134,7 @@
         if(newSong.id !== oldSong.id){
           this.$nextTick(() => {
             this.$refs.audio.play()
+            this.currentSong.getlyric();
           })
         }
       },
