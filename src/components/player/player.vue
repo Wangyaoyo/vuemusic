@@ -76,7 +76,7 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="endSong"></audio>
     <!--end/迷你播放器-->
   </div>
 </template>
@@ -222,6 +222,18 @@
           return item.id === this.currentSong.id
         })
         this.setCurrentIndex(index)
+      },
+      endSong(){
+        if(this.mode === playMode.loop){
+          this.loop()
+        }else{
+          this.next()
+        }
+      },
+      loop(){
+        const audio = this.$refs.audio
+        audio.currentTime = 0
+        audio.play()
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale()
