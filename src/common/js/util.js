@@ -1,13 +1,19 @@
+/* 返回min-max 之间一个随机的数 */
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
-
+/** 无副作用的洗牌函数
+ * 创建副本，避免改变原来的数组
+ * @param arr
+ * @returns {*}
+ */
 export function getRandomList(arr) {
-  for (let i = 0; i < arr.length; i++) {
+  let _arr = arr.slice()
+  for (let i = 0; i < _arr.length; i++) {
     let j = getRandomInt(0,i)
-    let temp = arr[i]
-    arr[i] = arr[j]
-    arr[j] = temp
+    let temp = _arr[i]
+    _arr[i] = _arr[j]
+    _arr[j] = temp
   }
-  return arr
+  return _arr
 }

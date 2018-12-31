@@ -61,8 +61,8 @@
         this.triggerPercent()
       },
       clickPercent(e){
-        /* 通过e.offsetX 获取位置 */
-        const offset = e.offsetX
+        /* 不通过e.offsetX 获取位置 会出现点击按钮跳回去的缺陷 */
+        const offset = e.pageX - this.$refs.progressBar.getBoundingClientRect().left
         this._updateProgressWidth(offset)
         this.triggerPercent()
       },

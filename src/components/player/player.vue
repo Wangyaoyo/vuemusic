@@ -134,7 +134,6 @@
         if(newSong.id !== oldSong.id){
           this.$nextTick(() => {
             this.$refs.audio.play()
-            console.log(this.currentSong);
           })
         }
       },
