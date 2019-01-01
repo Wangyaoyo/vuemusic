@@ -22,8 +22,8 @@
              @touchstart="middleTouchStart"
              @touchmove="middleTouchMove"
              @touchend="middleTouchEnd"
-                >
-          <div class="middle-l">
+        >
+          <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCla">
                 <img class="image" :src="currentSong.image"/>
@@ -117,7 +117,7 @@
   import Scroll from 'base/scroll/scroll'
 
   const transform = prefixName('transform')
-
+  const transitionDuration = prefixName('transitionDuration')
   export default {
     computed: {
       ...mapGetters([
@@ -166,12 +166,19 @@
     },
     watch: {
       currentSong(newSong, oldSong) {
-        if (newSong.id !== oldSong.id) {
-          this.$nextTick(() => {
-            this.$refs.audio.play()
-            this.getLyric();
-          })
+        /* 防止歌曲切换时歌词跳动 */
+        if (this.currentLyric) {
+          this.currentLyric.stop()
         }
+        if (newSong.id === oldSong.id) {
+          return
+        }
+        /* 使用setTimeout 而不是 nextTick的原因：保证微信从后台切到前台的时候歌曲可以重新播放？？？*/
+        setTimeout(() => {
+          this.$refs.audio.play()
+          this.getLyric();
+        }, 1000)
+
       },
       playing(newplay) {
         const audio = this.$refs.audio
@@ -189,34 +196,46 @@
       },
       togglePlay() {
         this.setPlaying(!this.playing)
+        if (this.currentLyric) {
+          this.currentLyric.togglePlay()
+        }
       },
       prev() {
         if (!this.songReady) {
           return
         }
-        let index = this.currentIndex - 1
-        if (index === -1) {
-          index = this.playList.length - 1
+        /* 防止currentSong不变化歌词不会执行stop()*/
+        if (this.playList.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex - 1
+          if (index === -1) {
+            index = this.playList.length - 1
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {
+            this.togglePlay()
+          }
+          this.songReady = false
         }
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlay()
-        }
-        this.songReady = false
       },
       next() {
         if (!this.songReady) {
           return
         }
-        let index = this.currentIndex + 1
-        if (index === this.playList.length - 1) {
-          index = 0
+        if (this.playList.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex + 1
+          if (index === this.playList.length - 1) {
+            index = 0
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {
+            this.togglePlay()
+          }
+          this.songReady = false
         }
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlay()
-        }
-        this.songReady = false
       },
       ready() {
         this.songReady = true
@@ -239,9 +258,13 @@
         return `${minute}:${second}`
       },
       onProgressChange(percent) {
-        this.$refs.audio.currentTime = percent * this.currentSong.duration
+        const time = percent * this.currentSong.duration
+        this.$refs.audio.currentTime = time
         if (!this.playing) {
           this.togglePlay()
+        }
+        if (this.currentLyric) {
+          this.currentLyric.seek(time * 1000)
         }
       },
       modeChange() {
@@ -273,6 +296,9 @@
         const audio = this.$refs.audio
         audio.currentTime = 0
         audio.play()
+        if (this.currentLyric) {
+          this.currentLyric.seek(0)
+        }
       },
       getLyric() {
         this.currentSong.getLyric().then((lyric) => {
@@ -283,7 +309,6 @@
         }).catch(() => {
           this.currentLyric = null
           this.currentLineNum = 0
-          this.currentPage = 'cd'
           this.playingLyric = ''
         })
       },
@@ -300,17 +325,61 @@
           this.$refs.lyricList.scrollTo(0, 0, 1000)
         }
       },
-      middleTouchStart(e){
+      middleTouchStart(e) {
         this.touch.initalted = true
         const touch = e.touches[0]
         this.touch.startX = touch.pageX
         this.touch.startY = touch.pageY
       },
-      middleTouchMove(e){
-
+      middleTouchMove(e) {
+        if (!this.touch.initalted) {
+          return
+        }
+        const touch = e.touches[0]
+        const deltaX = touch.pageX - this.touch.startX
+        const deltaY = touch.pageY - this.touch.startY
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+          return
+        }
+        const left = this.currentPage === 'cd' ? 0 : -window.innerWidth
+        const offsetWidth = Math.max(Math.min(left + deltaX, 0), -window.innerWidth)
+        /* 比较重要的变量 决定了滑动的方向 */
+        this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
+        this.$refs.middleL.style.opacity = 1 - this.touch.percent
+        // 过渡效果持续的时间
+        this.$refs.lyricList.$el.style[transitionDuration] = 0
+        this.$refs.middleL.style[transitionDuration] = 0
+        this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
       },
-      middleTouchEnd(){
+      middleTouchEnd() {
+        let offset
+        let opacity
         this.touch.initalted = false
+        if (this.currentPage === 'cd') {
+          if (this.touch.percent > 0.1) {
+            opacity = 0
+            offset = -window.innerWidth
+            this.currentPage = 'lyric'
+          } else {
+            opacity = 1
+            offset = 0
+          }
+        } else {
+          if (this.touch.percent < 0.9) {
+            opacity = 1
+            offset = 0
+            this.currentPage = 'cd'
+          } else {
+            opacity = 0
+            offset = -window.innerWidth
+          }
+        }
+        const time = 300
+        this.$refs.middleL.style.opacity = opacity
+        this.$refs.middleL.style[transitionDuration] = `${time}ms`
+        this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
+        this.$refs.lyricList.$el.style[transform] = `translate3d(${offset}px,0,0)`
+        this.touch.initiated = false
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale()
