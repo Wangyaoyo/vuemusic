@@ -25,6 +25,11 @@
                 <img class="image" :src="currentSong.image"/>
               </div>
             </div>
+            <!--单行歌词-->
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{playingLyric}}</div>
+            </div>
+            <!--/end单行歌词-->
           </div>
           <!--歌词滚动图层-->
           <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
@@ -38,6 +43,10 @@
           <!--/end歌词滚动图层-->
         </div>
         <div class="bottom">
+          <div class="dot-wrapper">
+            <span class="dot" :class="{'active':currentPage === 'cd'}"></span>
+            <span class="dot"></span>
+          </div>
           <div class="progress-wrapper">
             <span class="time time-l">{{format(nowTime)}}</span>
             <div class="prograss-bar-wrapper">
@@ -142,7 +151,9 @@
         nowTime: 0,
         radius: 32,
         currentLyric: null,
-        currentLineNum: 0
+        currentLineNum: 0,
+        currentPage: 'cd',
+        playingLyric: ''
       }
     },
     watch: {
@@ -186,6 +197,9 @@
         this.songReady = false
       },
       next() {
+        if (!this.songReady) {
+          return
+        }
         let index = this.currentIndex + 1
         if (index === this.playList.length - 1) {
           index = 0
@@ -194,6 +208,7 @@
         if (!this.playing) {
           this.togglePlay()
         }
+        this.songReady = false
       },
       ready() {
         this.songReady = true
@@ -258,18 +273,24 @@
             this.currentLyric.play()
           }
           console.log(this.currentLyric);
+        }).catch(() => {
+          this.currentLyric = null
+          this.currentLineNum = 0
+          this.currentPage = 'cd'
+          this.playingLyric = ''
         })
       },
       /* 歌词每一行发生改变时的回调函数 */
       handLyric({lineNum, txt}) {
         this.currentLineNum = lineNum
+        this.playingLyric = txt
         if (lineNum > 5) {
-          let lineEl = this.$refs.lyricLine[lineNum-5]
+          let lineEl = this.$refs.lyricLine[lineNum - 5]
           /* 向上偏移5个 */
-          this.$refs.lyricList.scrollToElement(lineEl,1000)
-        }else{
+          this.$refs.lyricList.scrollToElement(lineEl, 1000)
+        } else {
           /* 五行之内滚动到顶部 */
-          this.$refs.lyricList.scrollTo(0,0,1000)
+          this.$refs.lyricList.scrollTo(0, 0, 1000)
         }
       },
       enter(el, done) {
@@ -348,7 +369,6 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import "~common/stylus/mixin"
-
   .player
     .normal-player
       position: fixed
@@ -431,7 +451,6 @@
                 width: 100%
                 height: 100%
                 border-radius: 50%
-
           .playing-lyric-wrapper
             width: 80%
             margin: 30px auto 0 auto
@@ -579,7 +598,6 @@
           position: absolute
           left: 0
           top: 0
-
   @keyframes rotate
     0%
       transform: rotate(0)

@@ -16,6 +16,7 @@
 <script type="text/ecmascript-6">
   import {prefixName} from "common/js/dom";
 
+  const btnWidth = 16
   const transform = prefixName('transform')
   export default {
     props: {
@@ -24,15 +25,13 @@
         default: 0
       }
     },
-    data() {
-      return {
-        touch: {}
-      }
+    created() {
+      this.touch = {}
     },
     watch: {
       percent(newPercent) {
-        if (newPercent > 0 && !this.touch.initalted) {
-          const barWidth = this.$refs.progressBar.clientWidth - this.$refs.progressBtn.style.width
+        if (newPercent >= 0 && !this.touch.initalted) {
+          const barWidth = this.$refs.progressBar.clientWidth - btnWidth
           const offset = barWidth * newPercent
           this._updateProgressWidth(offset)
         }
@@ -49,10 +48,10 @@
       },
       progressTouchMove(e) {
         if (!this.touch.initalted) {
-          return;
+          return
         }
         const delta = e.touches[0].pageX - this.touch.startX
-        const offset = Math.min(Math.max(this.touch.progressLeft + delta,0 ) ,this.$refs.progressBar.clientWidth)
+        const offset = Math.min(Math.max(this.touch.progressLeft + delta, 0), this.$refs.progressBar.clientWidth-btnWidth)
 
         this._updateProgressWidth(offset)
       },
@@ -60,21 +59,20 @@
         this.touch.initalted = false
         this.triggerPercent()
       },
-      clickPercent(e){
+      clickPercent(e) {
         /* 不通过e.offsetX 获取位置 会出现点击按钮跳回去的缺陷 */
-        console.log(this.$refs.progressBar.getBoundingClientRect());
         const offset = e.pageX - this.$refs.progressBar.getBoundingClientRect().left
         this._updateProgressWidth(offset)
         this.triggerPercent()
       },
       /* 通知父组件拖动完成后的percent */
       triggerPercent() {
-        const percent = this.$refs.progress.clientWidth / (this.$refs.progressBar.clientWidth - this.$refs.progressBtn.style.width)
-        this.$emit('percentChange',percent)
+        const percent = this.$refs.progress.clientWidth / (this.$refs.progressBar.clientWidth - btnWidth)
+        this.$emit('percentChange', percent)
       },
       /* 更新进度 */
       _updateProgressWidth(offset) {
-        this.$refs.progress.style.width = offset + 'px'
+        this.$refs.progress.style.width = `${offset}px`
         this.$refs.progressBtn.style[transform] = `translate3d(${offset}px,0,0)`
       },
     }
