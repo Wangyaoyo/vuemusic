@@ -18,7 +18,11 @@
           <h1 class="title">{{currentSong.name}}</h1>
           <h2 class="subtitle">{{currentSong.singer}}</h2>
         </div>
-        <div class="middle">
+        <div class="middle"
+             @touchstart="middleTouchStart"
+             @touchmove="middleTouchMove"
+             @touchend="middleTouchEnd"
+                >
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCla">
@@ -45,11 +49,11 @@
         <div class="bottom">
           <div class="dot-wrapper">
             <span class="dot" :class="{'active':currentPage === 'cd'}"></span>
-            <span class="dot"></span>
+            <span class="dot" :class="{'active':currentPage === 'lyric'}"></span>
           </div>
           <div class="progress-wrapper">
             <span class="time time-l">{{format(nowTime)}}</span>
-            <div class="prograss-bar-wrapper">
+            <div class="progress-bar-wrapper">
               <progress-bar :percent="percent" @percentChange="onProgressChange"></progress-bar>
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
@@ -144,6 +148,10 @@
       modeCla() {
         return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
       }
+    },
+    created() {
+      /* 无需添加getter和setter ,可以在created中定义 */
+      this.touch = {}
     },
     data() {
       return {
@@ -272,7 +280,6 @@
           if (this.playing) {
             this.currentLyric.play()
           }
-          console.log(this.currentLyric);
         }).catch(() => {
           this.currentLyric = null
           this.currentLineNum = 0
@@ -292,6 +299,18 @@
           /* 五行之内滚动到顶部 */
           this.$refs.lyricList.scrollTo(0, 0, 1000)
         }
+      },
+      middleTouchStart(e){
+        this.touch.initalted = true
+        const touch = e.touches[0]
+        this.touch.startX = touch.pageX
+        this.touch.startY = touch.pageY
+      },
+      middleTouchMove(e){
+
+      },
+      middleTouchEnd(){
+        this.touch.initalted = false
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale()
@@ -598,6 +617,7 @@
           position: absolute
           left: 0
           top: 0
+
   @keyframes rotate
     0%
       transform: rotate(0)

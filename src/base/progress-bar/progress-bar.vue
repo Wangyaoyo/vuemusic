@@ -2,12 +2,11 @@
   <div class="progress-bar" ref="progressBar" @click="clickPercent">
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
-      <div class="progress-btn-wrapper">
-        <div class="progress-btn" ref="progressBtn"
-             @touchstart="progressTouchStart"
-             @touchmove="progressTouchMove"
-             @touchend="progressTouchEnd"
-        ></div>
+      <div class="progress-btn-wrapper"
+           @touchstart="progressTouchStart"
+           @touchmove="progressTouchMove"
+           @touchend="progressTouchEnd">
+        <div class="progress-btn" ref="progressBtn"></div>
       </div>
     </div>
   </div>
@@ -74,7 +73,7 @@
       _updateProgressWidth(offset) {
         this.$refs.progress.style.width = `${offset}px`
         this.$refs.progressBtn.style[transform] = `translate3d(${offset}px,0,0)`
-      },
+      }
     }
   }
 </script>
@@ -84,7 +83,6 @@
 
   .progress-bar
     height: 30px
-    width 230px
     .bar-inner
       position: relative
       top: 13px
