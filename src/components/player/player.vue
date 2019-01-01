@@ -76,7 +76,8 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="endSong"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime"
+           @ended="endSong"></audio>
     <!--end/迷你播放器-->
   </div>
 </template>
@@ -89,7 +90,7 @@
   import ProgressCircle from 'base/progress-circle/progress-circle'
   import {playMode} from "common/js/config";
   import {getRandomList} from "common/js/util";
-
+  import Lyric from "lyric-parser"
   const transform = prefixName('transform')
   export default {
     computed: {
@@ -126,15 +127,16 @@
       return {
         songReady: false,
         nowTime: 0,
-        radius: 32
+        radius: 32,
+        currentLyric: null
       }
     },
     watch: {
-      currentSong(newSong,oldSong) {
-        if(newSong.id !== oldSong.id){
+      currentSong(newSong, oldSong) {
+        if (newSong.id !== oldSong.id) {
           this.$nextTick(() => {
             this.$refs.audio.play()
-            this.currentSong.getlyric();
+            this.getLyric();
           })
         }
       },
@@ -223,17 +225,23 @@
         })
         this.setCurrentIndex(index)
       },
-      endSong(){
-        if(this.mode === playMode.loop){
+      endSong() {
+        if (this.mode === playMode.loop) {
           this.loop()
-        }else{
+        } else {
           this.next()
         }
       },
-      loop(){
+      loop() {
         const audio = this.$refs.audio
         audio.currentTime = 0
         audio.play()
+      },
+      getLyric() {
+        this.currentSong.getLyric().then((lyric) => {
+          this.currentLyric = new Lyric(lyric)
+          console.log(this.currentLyric);
+        })
       },
       enter(el, done) {
         const {x, y, scale} = this._getPosAndScale()
