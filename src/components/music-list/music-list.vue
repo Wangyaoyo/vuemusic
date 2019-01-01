@@ -31,11 +31,13 @@
   import Loading from "base/loading/loading";
   import {prefixName} from "common/js/dom";
   import {mapActions} from "vuex"
+  import {playlistMixin} from "common/js/mixin";
 
   const REMAIN_HEIGHT = 40
   const transform = prefixName('transform')
   const backdropfilter = prefixName('backdrop-filter')
   export default {
+    mixins:[playlistMixin],
     components: {
       Loading,
       SongList,
@@ -107,6 +109,12 @@
       }
     },
     methods: {
+      handlePlaylist(playlist){
+        /* 添加bottom属性重新计算高度 */
+        const bottom = playlist.length > 0 ? '60': ''
+        this.$refs.list.$el.style.bottom = `${bottom}px`
+        this.$refs.list.refresh()
+      },
       back() {
         this.$router.back()
       },

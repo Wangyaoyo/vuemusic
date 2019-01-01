@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <scroll ref="scroll" :data="discList" class="recommend-content">
         <!-- 加v-if条件，只有有数据才加载该dom-->
       <div>
@@ -41,7 +41,10 @@
   import Slider from 'base/slider/slider'
   import Scroll from 'base/scroll/scroll'
   import Loading from 'base/loading/loading'
+  import {playlistMixin} from "common/js/mixin";
+
   export default {
+    mixins:[playlistMixin],
     data() {
       return {
         slider: [],
@@ -53,6 +56,11 @@
       this._getDiscList()
     },
     methods: {
+      handlePlaylist(playlist){
+        const bottom = playlist.length > 0 ? '60': ''
+        this.$refs.recommend.style['bottom'] = `${bottom}px`
+        this.$refs.scroll.refresh()
+      },
       _getRecommend() {
         /* 返回的promise数据 */
         getRecommend().then((res) => {

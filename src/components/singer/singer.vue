@@ -1,6 +1,6 @@
 <template>
-	<div class="singer">
-    <listview :data="singerList" @select="select"></listview>
+	<div class="singer" ref="singer">
+    <listview :data="singerList" @select="select" ref="listView"></listview>
     <router-view></router-view>
   </div>
 </template>
@@ -11,9 +11,12 @@
     import Singer from "common/js/singer"
     import Listview from "base/listview/listview"
     import {mapMutations} from "vuex"
+    import {playlistMixin} from "common/js/mixin";
+
     const HOT_SINGER = '热门'
     const HOT_LENGTH = 10
     export default {
+      mixins:[playlistMixin],
       data(){
         return {
           singerList:[]
@@ -23,6 +26,12 @@
           this._getSingerList()
       },
       methods:{
+        handlePlaylist(playlist){
+          /* 添加bottom属性重新计算高度 */
+          const bottom = playlist.length > 0 ? '60': ''
+          this.$refs.singer.style.bottom = `${bottom}px`
+          this.$refs.listView.refresh()
+        },
         select(singer){
           /* 子路由跳转 */
           this.$router.push({

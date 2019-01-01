@@ -104,6 +104,9 @@
       }
     },
     methods: {
+      refresh(){
+        this.$refs.listView.refresh()
+      },
       onShortcutTouchStart(e) {
         let index = getData(e.target, 'index')
         let firstTouch = e.touches[0]
