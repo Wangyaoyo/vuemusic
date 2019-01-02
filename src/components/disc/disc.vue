@@ -7,6 +7,9 @@
 <script type="text/ecmascript-6">
     import MusicList from "components/music-list/music-list"
     import {mapGetters} from "vuex"
+    import {getDiscSong} from "api/recommend";
+    import {ERR_OK} from "api/config";
+
     export default {
       computed:{
         title(){
@@ -16,11 +19,24 @@
           return this.disc.imgurl
         },
         songs(){
-
+          // return this._getDiscSong()
         },
         ...mapGetters([
           'disc'
         ])
+      },
+      created(){
+        this._getDiscSong()
+      },
+      methods:{
+        _getDiscSong(){
+          getDiscSong(this.disc.dissid).then((res)=>{
+            if(res.code === ERR_OK){
+              console.log(res.cdlist[0].songlist);
+              return res.cdlist[0].songlist
+            }
+          })
+        }
       },
       components: {
         MusicList
