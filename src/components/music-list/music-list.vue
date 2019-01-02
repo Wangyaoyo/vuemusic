@@ -60,7 +60,7 @@
       },
       songs: {
         type: Array,
-        default: null
+        default: []
       }
     },
     created() {
