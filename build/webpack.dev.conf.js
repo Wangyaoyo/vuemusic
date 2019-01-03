@@ -37,7 +37,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       /* extend选项用来配置使用querystring(false)或qs(true)来解析数据*/
       /* qs比querystring出色的地方在于可以解析多级嵌套的复杂对象（最多5级） */
       apiRoutes.use(bodyParser.urlencoded({extended:true}))
-
+      /* 歌单 */
       apiRoutes.get('/api/getDiscList', function (req, res) {
         const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         axios.get(url, {
@@ -53,7 +53,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         })
       })
-
+      /* 歌曲url */
       apiRoutes.post('/api/getPurlUrl',bodyParser.json(),function (req,res) {
         const url = 'http://u.y.qq.com/cgi-bin/musicu.fcg'
         axios.post(url,req.body,{
@@ -68,7 +68,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         })
       })
-
+      /* 歌词 */
       apiRoutes.get('/api/lyric', function (req, res) {
         const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
         axios.get(url, {
@@ -84,9 +84,25 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         })
       })
-
+      /* 歌单详情页 */
       apiRoutes.get('/api/getDiscSong', function (req, res) {
         const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+        axios.get(url, {
+          headers: {
+            /* 根据访问的网址限制做的一种伪装 */
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e);
+        })
+      })
+      /* 排行榜 */
+      apiRoutes.get('/api/getTopList', function (req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg'
         axios.get(url, {
           headers: {
             /* 根据访问的网址限制做的一种伪装 */
