@@ -1,5 +1,5 @@
 <template>
-  <scroll class="suggest" :data="result">
+  <scroll class="suggest" :data="result" :pullUp="true" @scrollToEnd="searchMore" ref="suggest">
     <ul class="suggest-list">
       <li class="suggest-item" v-for="item in result">
         <div class="icon">
@@ -9,6 +9,7 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
+      <loading text="" v-show="hasMore"></loading>
     </ul>
   </scroll>
 </template>
@@ -18,10 +19,12 @@
   import {ERR_OK} from "api/config";
   import Scroll from "base/scroll/scroll";
   import {createSong} from "common/js/song";
+  import Loading from "base/loading/loading";
 
+  const pageNum = 30
   const TYPE_SINGER = 'singer'
   export default {
-    components: {Scroll},
+    components: {Loading, Scroll},
     props: {
       query: {
         type: String,
@@ -35,10 +38,23 @@
     data() {
       return {
         result: [],
-        page: 1
+        page: 1,
+        hasMore:true
       }
     },
     methods: {
+      searchMore(){
+        if(!this.hasMore){
+          return
+        }
+        this.page++
+        getSearchSong(this.query, this.page, this.showSinger,pageNum).then((res) => {
+          if (res.code === ERR_OK) {
+            this.result = this.result.concat(this._genResult(res.data))
+            this._checkMore(res.data)
+          }
+        })
+      },
       getIconCla(item) {
         return item.type === TYPE_SINGER ? 'icon-mine' : 'icon-music'
       },
@@ -50,13 +66,25 @@
         }
       },
       _getSearch() {
-        getSearchSong(this.query, this.page, this.showSinger).then((res) => {
+        /* 一些重置操作（保证每次搜索词改变的时候重新开始） */
+        this.page = 1
+        this.hasMore = true
+        this.$refs.suggest.scrollTo(0,0)
+        this.result = []
+
+        getSearchSong(this.query, this.page, this.showSinger,pageNum).then((res) => {
           if (res.code === ERR_OK) {
-            console.log(res.data);
-            this.result = this._genResult(res.data)
-            console.log(this.result);
+            // console.log(res.data);
+            this.result = this.result.concat(this._genResult(res.data))
+            // console.log(this.result);
+            this._checkMore(res.data)
           }
         })
+      },
+      _checkMore(data){
+        if(!data.song.list.length || data.song.curnum * this.page >= data.song.totalnum){
+          this.hasMore = false
+        }
       },
       _genResult(data) {
         let ret = []

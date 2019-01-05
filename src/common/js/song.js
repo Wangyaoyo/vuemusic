@@ -67,7 +67,7 @@ export function processSongsUrl(songs) {
   })
 }
 /* 过滤得到歌手名称 */
-export function filterSinger(singer) {
+function filterSinger(singer) {
   let ret = []
   if (!singer) {
     return ''

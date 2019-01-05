@@ -25,6 +25,10 @@
         listenScroll:{
           type:Boolean,
           default:false
+        },
+        pullUp:{
+          type:Boolean,
+          default:false
         }
       },
       mounted(){
@@ -46,6 +50,15 @@
             let me = this
             this.scroll.on('scroll',(pos) => {
               me.$emit('scroll',pos)
+            })
+          }
+
+          if(this.pullUp){
+            this.scroll.on('scrollEnd',()=>{
+              if(this.scroll.y <= (this.scroll.maxScrollY + 50)){
+                /* 无需业务逻辑，只需派发事件 */
+                this.$emit('scrollToEnd')
+              }
             })
           }
         },

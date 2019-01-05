@@ -21,7 +21,7 @@ export function getHotKey() {
 }
 
 /* 搜索歌曲 */
-export function getSearchSong(query, zhida, page) {
+export function getSearchSong(query, zhida, page,pagenum) {
   const url = '/api/getSearchSong'
 
   const data = Object.assign({}, commonParam, {
@@ -37,8 +37,8 @@ export function getSearchSong(query, zhida, page) {
     ie: 'utf-8',
     sem: 1,
     aggr: 0,
-    perpage: 20,
-    n: 20,
+    perpage: pagenum,
+    n: pagenum,
     p: page,
     remoteplace: 'txt.mqq.all',
     _: 1546672483314
