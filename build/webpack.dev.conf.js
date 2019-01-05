@@ -133,6 +133,22 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         })
       })
+      /* 热门搜索词 */
+      apiRoutes.get('/api/getHotKey', function (req, res) {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg'
+        axios.get(url, {
+          headers: {
+            /* 根据访问的网址限制做的一种伪装 */
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e);
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {
