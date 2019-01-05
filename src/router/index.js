@@ -7,6 +7,7 @@ import singer from 'components/singer/singer'
 import SingerDetail from 'components/singer-detail/singer-detail'
 /* 子路由使用步骤：导入组件 配置子路由 <router-view>标签 事件中push进去 */
 import Disc from 'components/disc/disc'
+import TopList from 'components/topList/topList'
 
 Vue.use(Router)
 
@@ -28,7 +29,13 @@ export default new Router({
     },
     {
       path:'/rank',
-      component:rank
+      component:rank,
+      children:[
+        {
+          path:':id',
+          component:TopList
+        }
+        ]
     },
     {
       path:'/search',

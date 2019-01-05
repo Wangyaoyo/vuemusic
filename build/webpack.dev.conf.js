@@ -116,6 +116,23 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         })
       })
+
+      /* 排行榜详情 */
+      apiRoutes.get('/api/getTopListDetail', function (req, res) {
+        const url = 'https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg'
+        axios.get(url, {
+          headers: {
+            /* 根据访问的网址限制做的一种伪装 */
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e);
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {
