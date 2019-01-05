@@ -149,6 +149,22 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         })
       })
+      /* 搜索歌曲 */
+      apiRoutes.get('/api/getSearchSong', function (req, res) {
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+        axios.get(url, {
+          headers: {
+            /* 根据访问的网址限制做的一种伪装 */
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e);
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {
