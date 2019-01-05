@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <music-list :title="title" :songs="songs" :bgImage="bgImage"></music-list>
+    <music-list :title="title" :songs="songs" :bgImage="bgImage" :rank="rank"></music-list>
   </transition>
 </template>
 
@@ -15,17 +15,18 @@
     created() {
       this._getTopSongs()
     },
-    data(){
+    data() {
       return {
-        songs:[]
+        songs: [],
+        rank: true
       }
     },
-    computed:{
-      title(){
+    computed: {
+      title() {
         return this.topList.topTitle
       },
-      bgImage(){
-        if(this.songs.length){
+      bgImage() {
+        if (this.songs.length) {
           return this.songs[0].image
         }
         return ''
@@ -36,22 +37,22 @@
     },
     methods: {
       _getTopSongs() {
-        if(!this.topList.id){
+        if (!this.topList.id) {
           this.$router.push('/rank')
           return
         }
         getTopListDetail(this.topList.id).then((res) => {
-          if(res.code === ERR_OK){
+          if (res.code === ERR_OK) {
             this.songs = this._normalizeSongs(res.songlist)
             console.log(this.songs);
           }
         })
       },
-      _normalizeSongs(list){
+      _normalizeSongs(list) {
         let ret = []
-        list.forEach((item)=>{
+        list.forEach((item) => {
           const musicData = item.data
-          if(musicData.albumid && musicData.songid){
+          if (musicData.albumid && musicData.songid) {
             ret.push(createSong(musicData))
           }
         })

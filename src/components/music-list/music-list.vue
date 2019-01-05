@@ -16,7 +16,7 @@
     <div class="bg-layer" ref="layer"></div>
     <scroll class="list" @scroll="scroll" :listenScroll="listenScroll" :probeType="probeType" :data="songs" ref="list">
       <div class="song-list-wrapper">
-        <song-list @selectSong="select" :songs="songs"></song-list>
+        <song-list @selectSong="select" :songs="songs" :title="title" :bgImage="bgImage" :rank="rank"></song-list>
       </div>
       <div class="loading-container" v-show="songs.length<=0">
         <loading></loading>
@@ -37,7 +37,7 @@
   const transform = prefixName('transform')
   const backdropfilter = prefixName('backdrop-filter')
   export default {
-    mixins:[playlistMixin],
+    mixins: [playlistMixin],
     components: {
       Loading,
       SongList,
@@ -61,6 +61,10 @@
       songs: {
         type: Array,
         default: []
+      },
+      rank: {
+        type: Boolean,
+        default: false
       }
     },
     created() {
@@ -109,9 +113,9 @@
       }
     },
     methods: {
-      handlePlaylist(playlist){
+      handlePlaylist(playlist) {
         /* 添加bottom属性重新计算高度 */
-        const bottom = playlist.length > 0 ? '60': ''
+        const bottom = playlist.length > 0 ? '60' : ''
         this.$refs.list.$el.style.bottom = `${bottom}px`
         this.$refs.list.refresh()
       },
@@ -121,15 +125,15 @@
       scroll(pos) {
         this.scrollY = pos.y
       },
-      select(item,index){
+      select(item, index) {
         this.selectPlayer({
-          list:this.songs,
-          index:index
+          list: this.songs,
+          index: index
         })
       },
-      randomPlay(){
+      randomPlay() {
         this.randomPlayer({
-          list:this.songs
+          list: this.songs
         })
       },
       ...mapActions([
