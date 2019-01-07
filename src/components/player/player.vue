@@ -19,8 +19,8 @@
           <h2 class="subtitle">{{currentSong.singer}}</h2>
         </div>
         <div class="middle"
-             @touchstart="middleTouchStart"
-             @touchmove="middleTouchMove"
+             @touchstart.prevent="middleTouchStart"
+             @touchmove.prevent="middleTouchMove"
              @touchend="middleTouchEnd"
         >
           <div class="middle-l" ref="middleL">

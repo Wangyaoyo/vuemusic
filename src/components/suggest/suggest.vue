@@ -1,7 +1,7 @@
 <template>
   <scroll class="suggest" :data="result" :pullUp="true" @scrollToEnd="searchMore" ref="suggest">
     <ul class="suggest-list">
-      <li class="suggest-item" v-for="item in result">
+      <li class="suggest-item" @click="selecItem(item)" v-for="item in result">
         <div class="icon">
           <i :class="getIconCla(item)"></i>
         </div>
@@ -20,6 +20,9 @@
   import Scroll from "base/scroll/scroll";
   import {createSong} from "common/js/song";
   import Loading from "base/loading/loading";
+  import Singer from "common/js/singer"
+  import {mapMutations} from "vuex"
+  import {mapActions} from "vuex"
 
   const pageNum = 30
   const TYPE_SINGER = 'singer'
@@ -43,6 +46,24 @@
       }
     },
     methods: {
+      selecItem(item){
+        //点击歌手
+        if(item.type === TYPE_SINGER){
+          const singer = new Singer({
+            id: item.singermid,
+            name: item.singername
+          })
+          this.$router.push({
+            path: `/search/${singer.id}`
+          })
+          /* 设置singer 才能显示歌手详情页 */
+          this.setSinger(singer)
+        }
+        //点击歌曲
+        else{
+          this.insertSong(item)
+        }
+      },
       searchMore(){
         if(!this.hasMore){
           return
@@ -105,7 +126,13 @@
           }
         })
         return ret
-      }
+      },
+      ...mapMutations({
+        'setSinger':'SET_SINGER'
+      }),
+      ...mapActions([
+        'insertSong'
+      ])
     },
     watch: {
       query() {
