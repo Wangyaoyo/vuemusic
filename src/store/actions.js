@@ -1,6 +1,7 @@
 import * as types from './mutation-types'
 import {playMode} from "common/js/config";
 import {getRandomList} from "common/js/util";
+import {saveSearch} from "common/js/cache";
 
 function getIndex(list,song) {
   return list.findIndex((item)=>{
@@ -74,4 +75,10 @@ export const insertSong = function ({commit,state},song) {
   commit(types.SET_SEQUENCE_LIST,sequenseList)
   commit(types.SET_CURRENT_INDEX,currentIndex)
   commit(types.SET_FULLSCREEN,true)
+}
+
+/* 添加搜索历史的记录 */
+export const saveSearchHistory = function ({commit},query) {
+  let searches = saveSearch(query)
+  commit(types.SET_SEARCH_HISTORY,searches)
 }
