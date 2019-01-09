@@ -34,6 +34,7 @@ export function randomPlayer({commit},{list}) {
 }
 
 export const insertSong = function ({commit,state},song) {
+  /* 不能在mutation外部修改playList 故使用它的副本 */
   let playList = state.playList.slice()
   let sequenseList = state.sequenceList.slice()
   let currentIndex = state.currentIndex
@@ -50,6 +51,7 @@ export const insertSong = function ({commit,state},song) {
       playList.splice(fpIndex,1)
       currentIndex--
     }else{
+      /* 加1是因为添加在fpIndex之前 多了一个 */
       playList.splice(fpIndex+1,1)
     }
   }
@@ -62,7 +64,6 @@ export const insertSong = function ({commit,state},song) {
   if(fsIndex > -1){
     if(fsIndex < currentSIndex){
       sequenseList.splice(fsIndex,1)
-      currentSIndex--
     }else{
       sequenseList.splice(fsIndex+1,1)
     }

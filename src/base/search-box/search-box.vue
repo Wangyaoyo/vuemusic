@@ -7,6 +7,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import {debounce} from "common/js/util";
+
   export default {
     props: {
       placeholder: {
@@ -15,9 +17,10 @@
       }
     },
     created() {
-      this.$watch('query', (newQuery) => {
+      /* 截流函数用法 */
+      this.$watch('query', debounce((newQuery) => {
         this.$emit('query',newQuery)
-      })
+      },200))
     },
     data() {
       return {

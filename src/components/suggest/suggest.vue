@@ -11,6 +11,9 @@
       </li>
       <loading text="" v-show="hasMore"></loading>
     </ul>
+    <div class="no-result-wrapper" v-show="!hasMore && !result.length">
+      <no-result text="抱歉，暂无此歌曲"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -23,11 +26,12 @@
   import Singer from "common/js/singer"
   import {mapMutations} from "vuex"
   import {mapActions} from "vuex"
+  import NoResult from "base/no-result/no-result";
 
   const pageNum = 30
   const TYPE_SINGER = 'singer'
   export default {
-    components: {Loading, Scroll},
+    components: {NoResult, Loading, Scroll},
     props: {
       query: {
         type: String,
