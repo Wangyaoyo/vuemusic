@@ -1,5 +1,11 @@
 <template>
-  <scroll class="suggest" :data="result" :pullUp="true" @scrollToEnd="searchMore" ref="suggest">
+  <scroll class="suggest"
+          :data="result"
+          :pullUp="pullUp"
+          @scrollToEnd="searchMore"
+          :beforeScroll="beforescroll"
+          @beforeScroll="listScroll"
+          ref="suggest">
     <ul class="suggest-list">
       <li class="suggest-item" @click="selecItem(item)" v-for="item in result">
         <div class="icon">
@@ -46,10 +52,15 @@
       return {
         result: [],
         page: 1,
-        hasMore:true
+        hasMore:true,
+        pullUp:true,
+        beforescroll:true
       }
     },
     methods: {
+      listScroll(){
+        this.$emit('listScroll')
+      },
       selecItem(item){
         //点击歌手
         if(item.type === TYPE_SINGER){

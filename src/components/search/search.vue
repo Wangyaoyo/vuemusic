@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="search-result"  v-show="query">
-      <suggest :query="query"></suggest>
+      <suggest @listScroll="inputBlur" :query="query"></suggest>
     </div>
     <router-view></router-view>
   </div>
@@ -43,6 +43,10 @@
       }
     },
     methods: {
+      inputBlur(){
+        /* 父组件可以调用子组件的方法：滚动时派发事件让输入框失去焦点，同时：在移动端还可以让键盘收起 */
+        this.$refs.searchBox.inputblur()
+      },
       addQuery(k) {
         this.$refs.searchBox.setQuery(k)
       },

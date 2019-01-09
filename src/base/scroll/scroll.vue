@@ -29,6 +29,10 @@
         pullUp:{
           type:Boolean,
           default:false
+        },
+        beforeScroll:{
+          type:Boolean,
+          default:false
         }
       },
       mounted(){
@@ -59,6 +63,12 @@
                 /* 无需业务逻辑，只需派发事件 */
                 this.$emit('scrollToEnd')
               }
+            })
+          }
+
+          if(this.beforeScroll){
+            this.scroll.on('beforeScrollStart',()=>{
+              this.$emit('beforeScroll')
             })
           }
         },
