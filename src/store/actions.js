@@ -1,7 +1,7 @@
 import * as types from './mutation-types'
 import {playMode} from "common/js/config";
 import {getRandomList} from "common/js/util";
-import {saveSearch} from "common/js/cache";
+import {saveSearch,deleteSearch,clearSearch} from "common/js/cache";
 
 function getIndex(list,song) {
   return list.findIndex((item)=>{
@@ -24,7 +24,7 @@ export function selectPlayer({commit,state},{list,index}) {
   commit(types.SET_CURRENT_INDEX,index)
 }
 
-export function randomPlayer({commit},{list}) {
+export const randomPlayer = function ({commit},{list}) {
   let randomList = getRandomList(list)
   commit(types.SET_PLAY_LIST,randomList)
   commit(types.SET_PLAYING,true)
@@ -81,4 +81,14 @@ export const insertSong = function ({commit,state},song) {
 export const saveSearchHistory = function ({commit},query) {
   let searches = saveSearch(query)
   commit(types.SET_SEARCH_HISTORY,searches)
+}
+
+/* 删除某一条搜索记录 同时删除缓存 */
+export const deleteSearchHistory = function ({commit},query) {
+  commit(types.SET_SEARCH_HISTORY,deleteSearch(query))
+}
+
+/* 清除全部搜索记录 同时删除缓存 */
+export const clearSearchHistory = function ({commit}) {
+  commit(types.SET_SEARCH_HISTORY,clearSearch())
 }

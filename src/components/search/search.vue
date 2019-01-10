@@ -13,10 +13,19 @@
             </li>
           </ul>
         </div>
+        <div class="search-history" v-show="searchHistory.length">
+          <h1 class="title">
+            <span class="text">搜索历史</span>
+            <span class="clear" @click="clearSearchHistory">
+              <i class="icon-clear"></i>
+            </span>
+          </h1>
+          <search-list @selectSearch="addQuery" @deleteSearch="deleteSearchHistory" :searches="searchHistory"></search-list>
+        </div>
       </div>
     </div>
     <div class="search-result"  v-show="query">
-      <suggest @searchQuery="searchHistory" @listScroll="inputBlur" :query="query"></suggest>
+      <suggest @searchQuery="searchhistory" @listScroll="inputBlur" :query="query"></suggest>
     </div>
     <router-view></router-view>
   </div>
@@ -27,12 +36,13 @@
   import {getHotKey} from "api/search";
   import {ERR_OK} from "api/config";
   import Suggest from "components/suggest/suggest";
-  import {mapActions} from "vuex"
-
+  import {mapMutations,mapActions,mapGetters} from "vuex"
+  import SearchList from "base/search-list/search-list"
   export default {
     components: {
       Suggest,
-      SearchBox
+      SearchBox,
+      SearchList
     },
     created() {
       this._getHotKey()
@@ -43,7 +53,16 @@
         query: ''
       }
     },
+    computed:{
+      ...mapGetters([
+        'searchHistory'
+      ])
+    },
     methods: {
+      /* 点击删除某个searchHistory ：优化点：参数相同的时候可以直接调用actions*/
+      /*deleteSearch(item){
+        this.deleteSearchHistory(item)
+      },*/
       inputBlur(){
         /* 父组件可以调用子组件的方法：滚动时派发事件让输入框失去焦点，同时：在移动端还可以让键盘收起 */
         this.$refs.searchBox.inputblur()
@@ -61,12 +80,17 @@
           }
         })
       },
-      searchHistory(){
+      searchhistory(){
         this.saveSearchHistory(this.query)
       },
       ...mapActions([
-        'saveSearchHistory'
-      ])
+        'saveSearchHistory',
+        'deleteSearchHistory',
+        'clearSearchHistory'
+      ]),
+      ...mapMutations({
+        setSearchHistory:'SET_SEARCH_HISTORY'
+      })
     }
   }
 </script>
