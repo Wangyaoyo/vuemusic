@@ -3,29 +3,32 @@
     <div class="search-box-wrapper">
       <search-box @query="getQuery" ref="searchBox"></search-box>
     </div>
-    <div class="shortcut-wrapper" v-show="!query">
-      <div class="shortcut">
-        <div class="hot-key">
-          <h1 class="title">热门搜索</h1>
-          <ul>
-            <li @click="addQuery(item.k)" class="item" v-for="(item,index) in hotKey">
-              <span>{{item.k}}</span>
-            </li>
-          </ul>
-        </div>
-        <div class="search-history" v-show="searchHistory.length">
-          <h1 class="title">
-            <span class="text">搜索历史</span>
-            <span class="clear" @click="showConfirm">
+    <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
+      <scroll class="shortcut" :data="shortCut" ref="scroll">
+        <div>
+          <div class="hot-key">
+            <h1 class="title">热门搜索</h1>
+            <ul>
+              <li @click="addQuery(item.k)" class="item" v-for="(item,index) in hotKey">
+                <span>{{item.k}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="searchHistory.length">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="showConfirm">
               <i class="icon-clear"></i>
             </span>
-          </h1>
-          <search-list @selectSearch="addQuery" @deleteSearch="deleteSearchHistory" :searches="searchHistory"></search-list>
+            </h1>
+            <search-list @selectSearch="addQuery" @deleteSearch="deleteSearchHistory"
+                         :searches="searchHistory"></search-list>
+          </div>
         </div>
-      </div>
+      </scroll>
     </div>
-    <div class="search-result"  v-show="query">
-      <suggest @searchQuery="searchhistory" @listScroll="inputBlur" :query="query"></suggest>
+    <div class="search-result" v-show="query" ref="searchResult">
+      <suggest @searchQuery="searchhistory" @listScroll="inputBlur" :query="query" ref="suggest"></suggest>
     </div>
     <router-view></router-view>
     <confirm @confirm="confirm" text="是否清空所有搜索记录？" confirmBtnText="清空" ref="confirmRef"></confirm>
@@ -37,11 +40,16 @@
   import {getHotKey} from "api/search";
   import {ERR_OK} from "api/config";
   import Suggest from "components/suggest/suggest";
-  import {mapMutations,mapActions,mapGetters} from "vuex"
+  import {mapMutations, mapActions, mapGetters} from "vuex"
   import SearchList from "base/search-list/search-list"
-  import Confirm from "base/confirm/confirm";
+  import Confirm from "base/confirm/confirm"
+  import Scroll from "base/scroll/scroll";
+  import {playlistMixin} from "common/js/mixin";
+
   export default {
+    mixins:[playlistMixin],
     components: {
+      Scroll,
       Confirm,
       Suggest,
       SearchBox,
@@ -56,23 +64,44 @@
         query: ''
       }
     },
-    computed:{
+    computed: {
+      shortCut(){
+        return this.hotKey.concat(this.searchHistory)
+      },
       ...mapGetters([
         'searchHistory'
       ])
     },
+    watch:{
+      /* 时机很重要：从suggest切回search页面需要重新计算高度 */
+      query(newQuery){
+        if(!newQuery){
+          setTimeout(()=>{
+            this.$refs.scroll.refresh()
+          },20)
+        }
+      }
+    },
     methods: {
-      showConfirm(){
+      handlePlaylist(playList){
+        const bottom = playList.length > 0 ?  '60' : ''
+        this.$refs.shortcutWrapper.style.bottom = `${bottom}px`
+        this.$refs.scroll.refresh()
+
+        this.$refs.searchResult.style.bottom = `${bottom}px`
+        this.$refs.suggest.refresh()
+      },
+      showConfirm() {
         this.$refs.confirmRef.show()
       },
-      confirm(){
+      confirm() {
         this.clearSearchHistory()
       },
       /* 点击删除某个searchHistory ：优化点：参数相同的时候可以直接调用actions*/
       /*deleteSearch(item){
         this.deleteSearchHistory(item)
       },*/
-      inputBlur(){
+      inputBlur() {
         /* 父组件可以调用子组件的方法：滚动时派发事件让输入框失去焦点，同时：在移动端还可以让键盘收起 */
         this.$refs.searchBox.inputblur()
       },
@@ -89,7 +118,7 @@
           }
         })
       },
-      searchhistory(){
+      searchhistory() {
         this.saveSearchHistory(this.query)
       },
       ...mapActions([
@@ -98,7 +127,7 @@
         'clearSearchHistory'
       ]),
       ...mapMutations({
-        setSearchHistory:'SET_SEARCH_HISTORY'
+        setSearchHistory: 'SET_SEARCH_HISTORY'
       })
     }
   }
