@@ -94,11 +94,12 @@
             <i :class="miniPlayCla" class="icon-mini" @click.stop="togglePlay"></i>
           </progress-circle>
         </div>
-        <div class="control">
+        <div class="control" @click="showPlaylist">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
+    <Playlist ref="playlistRef"></Playlist>
     <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime"
            @ended="endSong"></audio>
     <!--end/迷你播放器-->
@@ -115,6 +116,7 @@
   import {getRandomList} from "common/js/util";
   import Lyric from "lyric-parser"
   import Scroll from 'base/scroll/scroll'
+  import Playlist from 'components/playlist/playlist'
 
   const transform = prefixName('transform')
   const transitionDuration = prefixName('transitionDuration')
@@ -188,6 +190,9 @@
       }
     },
     methods: {
+      showPlaylist(){
+        this.$refs.playlistRef.show()
+      },
       back() {
         this.setFullScreen(false)
       },
@@ -449,7 +454,8 @@
     components: {
       ProgressBar,
       ProgressCircle,
-      Scroll
+      Scroll,
+      Playlist
     }
   }
 </script>
