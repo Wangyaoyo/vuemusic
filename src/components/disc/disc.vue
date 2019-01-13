@@ -41,7 +41,6 @@
         }
         getDiscSong(this.disc.dissid).then((res) => {
           if (res.code === ERR_OK) {
-            console.log(res.cdlist[0].songlist);
             processSongsUrl(this._normalizeSong(res.cdlist[0].songlist)).then((songs)=>{
               this.songs = songs
             })

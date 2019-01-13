@@ -120,7 +120,7 @@
           if (res.code === ERR_OK) {
             // console.log(res.data);
             this.result = this.result.concat(this._genResult(res.data))
-            console.log(this.result);
+            // console.log(this.result);
             this._checkMore(res.data)
           }
         })
@@ -147,7 +147,7 @@
           /*processSongsUrl(this._normalizeSong(list)).then((songs) => {
             this.songs = songs
           })*/
-          console.log(this.songs);
+          // console.log(this.songs);
           ret = ret.concat(this._normalizeSong(data.song.list))
           // ret = ret.concat(songs)
         }
@@ -161,7 +161,7 @@
             ret.push(createSong(musicData))
           }
         })
-        console.log(ret);
+        // console.log(ret);
         return ret
       },
       ...mapMutations({
