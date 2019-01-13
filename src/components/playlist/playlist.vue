@@ -11,13 +11,14 @@
         </div>
         <scroll ref="listContent" class="list-content" :data="sequenceList">
           <transition-group name="list" tag="ul">
-            <li ref="listItem" class="item" v-for="(item,index) in sequenceList" :key="index" @click="selectItem(item,index)">
+            <li class="item" v-for="(item,index) in sequenceList" :key="index"
+                @click="selectItem(item,index)" ref="listRef">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteSong(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -38,7 +39,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations,mapActions} from 'vuex'
   import Scroll from "base/scroll/scroll";
   import {playMode} from "common/js/config";
 
@@ -57,15 +58,30 @@
         'playList'
       ])
     },
+    watch:{
+      currentSong(oldSong,newSong){
+        if(!this.showFlag || oldSong.id === newSong.id){
+          return
+        }
+        this.scrollToCurrent(newSong)
+      },
+    },
     methods: {
-      selectItem(item,index){
+      scrollToCurrent(item) {
+        const index = this.sequenceList.findIndex((song) => {
+          return item.id === song.id
+        })
+        this.$refs.listContent.scrollToElement(this.$refs.listRef[index],300)
+      },
+      selectItem(item, index) {
         /* 随机播放模式：找到这首歌设置到currentIndex */
-        if(this.mode === playMode.random){
-          index = this.playList.findIndex((song)=>{
+        if (this.mode === playMode.random) {
+          index = this.playList.findIndex((song) => {
             return item.id === song.id
           })
         }
         this.setCurrentIndex(index)
+        this.setPlaying(true)
       },
       getCurrentIcon(item) {
         if (this.currentSong.id === item.id) {
@@ -78,14 +94,19 @@
         /* 每次弹出时重新计算scroll高度 */
         setTimeout(() => {
           this.$refs.listContent.refresh()
+          this.scrollToCurrent(this.currentSong)
         }, 20)
       },
       hide() {
         this.showFlag = false
       },
       ...mapMutations({
-        setCurrentIndex: 'SET_CURRENT_INDEX'
-      })
+        setCurrentIndex: 'SET_CURRENT_INDEX',
+        setPlaying: 'SET_PLAYING'
+      }),
+      ...mapActions([
+        'deleteSong'
+      ])
     }
   }
 </script>
