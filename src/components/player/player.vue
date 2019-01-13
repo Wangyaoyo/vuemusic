@@ -60,13 +60,13 @@
           </div>
           <div class="operators">
             <div class="icon i-left">
-              <i :class="modeCla" @click="modeChange"></i>
+              <i :class="modeClass" @click="modeChange"></i>
             </div>
             <div class="icon i-left" :class="disableCla">
               <i class="icon-prev" @click="prev"></i>
             </div>
             <div class="icon i-center">
-              <i :class="playCla" @click="togglePlay"></i>
+              <i :class="playClass" @click="togglePlay"></i>
             </div>
             <div class="icon i-right" :class="disableCla">
               <i class="icon icon-next" @click="next"></i>
@@ -117,21 +117,19 @@
   import Lyric from "lyric-parser"
   import Scroll from 'base/scroll/scroll'
   import Playlist from 'components/playlist/playlist'
+  import {modeMixin} from "common/js/mixin";
 
   const transform = prefixName('transform')
   const transitionDuration = prefixName('transitionDuration')
   export default {
+    mixins:[modeMixin],
     computed: {
       ...mapGetters([
         'fullScreen',
-        'playList',
-        'currentSong',
         'playing',
         'currentIndex',
-        'mode',
-        'sequenceList'
       ]),
-      playCla() {
+      playClass() {
         return this.playing ? 'icon-pause' : 'icon-play'
       },
       miniPlayCla() {
@@ -146,9 +144,6 @@
       },
       percent() {
         return this.nowTime / this.currentSong.duration
-      },
-      modeCla() {
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
       }
     },
     created() {
@@ -168,6 +163,9 @@
     },
     watch: {
       currentSong(newSong, oldSong) {
+        if(!newSong.id){
+          return
+        }
         /* 防止歌曲切换时歌词跳动 */
         if (this.currentLyric) {
           this.currentLyric.stop()
@@ -270,24 +268,6 @@
         if (this.currentLyric) {
           this.currentLyric.seek(time * 1000)
         }
-      },
-      modeChange() {
-        const mode = (this.mode + 1) % 3
-        this.setMode(mode)
-        let list = null
-        if (this.mode === playMode.random) {
-          list = getRandomList(this.sequenceList)
-        } else {
-          list = this.sequenceList
-        }
-        this.resetCurrentIndex(list)
-        this.setPlayList(list)
-      },
-      resetCurrentIndex(list) {
-        let index = list.findIndex((item) => {
-          return item.id === this.currentSong.id
-        })
-        this.setCurrentIndex(index)
       },
       endSong() {
         if (this.mode === playMode.loop) {
@@ -444,10 +424,7 @@
       },
       ...mapMutations({
         setFullScreen: 'SET_FULLSCREEN',
-        setPlaying: 'SET_PLAYING',
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setMode: 'SET_MODE',
-        setPlayList: 'SET_PLAY_LIST'
+        setPlaying: 'SET_PLAYING'
       })
     },
     components: {

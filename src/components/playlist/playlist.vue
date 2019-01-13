@@ -4,9 +4,9 @@
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon"></i>
-            <span class="text"></span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <i class="icon" :class="modeClass" @click="modeChange"></i>
+            <span class="text">{{modeText}}</span>
+            <span class="clear" @click.stop="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
         <scroll ref="listContent" class="list-content" :data="sequenceList">
@@ -18,7 +18,7 @@
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
-              <span class="delete" @click.stop="deleteSong(item)">
+              <span class="delete" @click.stop="deleteItem(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -34,44 +34,58 @@
           <span>关闭</span>
         </div>
       </div>
+      <confirm text="是否清空播放列表?" @confirm="deleteAll" ref="confirm"></confirm>
     </div>
   </transition>
 </template>
 
 <script type="text/ecmascript-6">
-  import {mapGetters, mapMutations,mapActions} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
   import Scroll from "base/scroll/scroll";
   import {playMode} from "common/js/config";
+  import Confirm from "base/confirm/confirm";
+  import {modeMixin} from "common/js/mixin";
 
   export default {
-    components: {Scroll},
+    mixins:[modeMixin],
+    components: {Confirm, Scroll},
     data() {
       return {
         showFlag: false
       }
     },
     computed: {
-      ...mapGetters([
-        'sequenceList',
-        'currentSong',
-        'mode',
-        'playList'
-      ])
+      modeText(){
+        return this.mode === playMode.random ? '随机播放' : this.mode === playMode.loop ?  '单曲循环' : '顺序播放'
+      }
     },
-    watch:{
-      currentSong(oldSong,newSong){
-        if(!this.showFlag || oldSong.id === newSong.id){
+    watch: {
+      currentSong(oldSong, newSong) {
+        if (!this.showFlag || oldSong.id === newSong.id) {
           return
         }
         this.scrollToCurrent(newSong)
       },
     },
     methods: {
+      showConfirm() {
+        this.$refs.confirm.show()
+      },
+      deleteAll() {
+        this.clearList()
+        this.hide()
+      },
+      deleteItem(item) {
+        this.deleteSong(item)
+        if (!this.playList.length) {
+          this.hide()
+        }
+      },
       scrollToCurrent(item) {
         const index = this.sequenceList.findIndex((song) => {
           return item.id === song.id
         })
-        this.$refs.listContent.scrollToElement(this.$refs.listRef[index],300)
+        this.$refs.listContent.scrollToElement(this.$refs.listRef[index], 300)
       },
       selectItem(item, index) {
         /* 随机播放模式：找到这首歌设置到currentIndex */
@@ -100,12 +114,9 @@
       hide() {
         this.showFlag = false
       },
-      ...mapMutations({
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setPlaying: 'SET_PLAYING'
-      }),
       ...mapActions([
-        'deleteSong'
+        'deleteSong',
+        'clearList'
       ])
     }
   }

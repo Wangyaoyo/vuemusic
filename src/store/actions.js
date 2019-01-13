@@ -103,23 +103,28 @@ export const deleteSong = function ({commit, state}, song) {
   let sequenceList = state.sequenceList.slice()
   let currentIndex = state.currentIndex
 
-  let pIndex = playList.findIndex((item) => {
-    return item.id === song.id
-  })
-  if (pIndex > -1) {
-    playList.splice(pIndex, 1)
-  }
-  if (currentIndex > pIndex || currentIndex === playList.length - 1) {
-    currentIndex--
-  }
+  let pIndex = getIndex(playList,song)
+  playList.splice(pIndex, 1)
+  let sIndex = getIndex(sequenceList,song)
+  sequenceList.splice(sIndex, 1)
 
-  let sIndex = sequenceList.findIndex((item) => {
-    return item.id === song.id
-  })
-  if (sIndex > -1) {
-    sequenceList.splice(sIndex, 1)
+  if (currentIndex > pIndex || currentIndex === playList.length) {
+    currentIndex--
   }
   commit(types.SET_PLAY_LIST, playList)
   commit(types.SET_CURRENT_INDEX, currentIndex)
   commit(types.SET_SEQUENCE_LIST, sequenceList)
+
+  const playState = playList.length > 0 ? true : false
+  commit(types.SET_PLAYING,playState)
+}
+
+/* 清除顺序播放列表 */
+export const clearList = function ({commit,state}) {
+  commit(types.SET_PLAY_LIST, [])
+  commit(types.SET_CURRENT_INDEX, -1)
+  commit(types.SET_SEQUENCE_LIST, [])
+  commit(types.SET_PLAYING,false)
+  commit(types.SET_PLAYING, false)
+  commit(types.SET_FULLSCREEN, false)
 }
