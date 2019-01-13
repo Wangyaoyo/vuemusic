@@ -180,7 +180,6 @@
           this.$refs.audio.play()
           this.getLyric();
         }, 1000)
-
       },
       playing(newplay) {
         const audio = this.$refs.audio

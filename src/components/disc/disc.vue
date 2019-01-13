@@ -10,6 +10,7 @@
   import {getDiscSong} from "api/recommend";
   import {ERR_OK} from "api/config";
   import {createSong} from "common/js/song";
+  import {processSongsUrl} from "common/js/song";
 
   export default {
     computed: {
@@ -40,8 +41,10 @@
         }
         getDiscSong(this.disc.dissid).then((res) => {
           if (res.code === ERR_OK) {
-            this.songs = this._normalizeSong(res.cdlist[0].songlist)
-            console.log(this.songs);
+            console.log(res.cdlist[0].songlist);
+            processSongsUrl(this._normalizeSong(res.cdlist[0].songlist)).then((songs)=>{
+              this.songs = songs
+            })
           }
         })
       },

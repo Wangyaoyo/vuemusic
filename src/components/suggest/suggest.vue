@@ -33,6 +33,7 @@
   import {mapMutations} from "vuex"
   import {mapActions} from "vuex"
   import NoResult from "base/no-result/no-result";
+  import {processSongsUrl} from "common/js/song";
 
   const pageNum = 30
   const TYPE_SINGER = 'singer'
@@ -52,21 +53,22 @@
       return {
         result: [],
         page: 1,
-        hasMore:true,
-        pullUp:true,
-        beforescroll:true
+        hasMore: true,
+        pullUp: true,
+        beforescroll: true,
+        songs:[]
       }
     },
     methods: {
-      refresh(){
+      refresh() {
         this.$refs.suggest.refresh()
       },
-      listScroll(){
+      listScroll() {
         this.$emit('listScroll')
       },
-      selecItem(item){
+      selecItem(item) {
         //点击歌手
-        if(item.type === TYPE_SINGER){
+        if (item.type === TYPE_SINGER) {
           const singer = new Singer({
             id: item.singermid,
             name: item.singername
@@ -78,20 +80,21 @@
           this.setSinger(singer)
         }
         //点击歌曲
-        else{
+        else {
           this.insertSong(item)
         }
         /* 派发事件：存储搜索历史 */
         this.$emit('searchQuery')
       },
-      searchMore(){
-        if(!this.hasMore){
+      searchMore() {
+        if (!this.hasMore) {
           return
         }
         this.page++
-        getSearchSong(this.query, this.page, this.showSinger,pageNum).then((res) => {
+        getSearchSong(this.query, this.page, this.showSinger, pageNum).then((res) => {
           if (res.code === ERR_OK) {
-            this.result = this.result.concat(this._genResult(res.data))
+            /* 删除第一条类型为歌手的数据 */
+            this.result = this.result.concat(this.removeSinger(this._genResult(res.data)))
             this._checkMore(res.data)
           }
         })
@@ -110,20 +113,26 @@
         /* 一些重置操作（保证每次搜索词改变的时候重新开始） */
         this.page = 1
         this.hasMore = true
-        this.$refs.suggest.scrollTo(0,0)
+        this.$refs.suggest.scrollTo(0, 0)
         this.result = []
 
-        getSearchSong(this.query, this.page, this.showSinger,pageNum).then((res) => {
+        getSearchSong(this.query, this.page, this.showSinger, pageNum).then((res) => {
           if (res.code === ERR_OK) {
             // console.log(res.data);
             this.result = this.result.concat(this._genResult(res.data))
-            // console.log(this.result);
+            console.log(this.result);
             this._checkMore(res.data)
           }
         })
       },
-      _checkMore(data){
-        if(!data.song.list.length || data.song.curnum * this.page >= data.song.totalnum){
+      removeSinger(arr) {
+        if (arr[0].type === TYPE_SINGER) {
+          arr.shift()
+        }
+        return arr
+      },
+      _checkMore(data) {
+        if (!data.song.list.length || data.song.curnum * this.page >= data.song.totalnum) {
           this.hasMore = false
         }
       },
@@ -134,8 +143,15 @@
           ret.push({...data.zhida, ...{type: TYPE_SINGER}})
         }
         if (data.song) {
+          // let list = data.song.list.slice(1)
+          /*processSongsUrl(this._normalizeSong(list)).then((songs) => {
+            this.songs = songs
+          })*/
+          console.log(this.songs);
           ret = ret.concat(this._normalizeSong(data.song.list))
+          // ret = ret.concat(songs)
         }
+        // console.log(ret);
         return ret
       },
       _normalizeSong(list) {
@@ -145,10 +161,11 @@
             ret.push(createSong(musicData))
           }
         })
+        console.log(ret);
         return ret
       },
       ...mapMutations({
-        'setSinger':'SET_SINGER'
+        'setSinger': 'SET_SINGER'
       }),
       ...mapActions([
         'insertSong'

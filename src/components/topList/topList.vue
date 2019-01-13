@@ -10,6 +10,7 @@
   import {mapGetters} from 'vuex'
   import {ERR_OK} from "api/config";
   import {createSong} from "common/js/song";
+  import {processSongsUrl} from "common/js/song";
 
   export default {
     created() {
@@ -43,8 +44,9 @@
         }
         getTopListDetail(this.topList.id).then((res) => {
           if (res.code === ERR_OK) {
-            this.songs = this._normalizeSongs(res.songlist)
-            console.log(this.songs);
+            processSongsUrl(this._normalizeSongs(res.songlist)).then((songs)=>{
+              this.songs = songs
+            })
           }
         })
       },

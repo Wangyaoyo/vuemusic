@@ -63,6 +63,7 @@ export function processSongsUrl(songs) {
         })
       }
     }
+    console.log(songs);
     return songs
   })
 }

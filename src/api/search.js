@@ -21,7 +21,7 @@ export function getHotKey() {
 }
 
 /* 搜索歌曲 */
-export function getSearchSong(query, zhida, page,pagenum) {
+export function getSearchSong(query,page,zhida,pagenum) {
   const url = '/api/getSearchSong'
 
   const data = Object.assign({}, commonParam, {

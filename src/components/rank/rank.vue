@@ -43,7 +43,6 @@
       _getTopList() {
         getTopList().then((res) => {
           if (res.code === ERR_OK) {
-            console.log(res.data);
             this.topList = res.data.topList
           }
         })
@@ -70,7 +69,7 @@
   }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" scoped rel="stylesheet/stylus">
   @import "~common/stylus/variable"
   @import "~common/stylus/mixin"
 
