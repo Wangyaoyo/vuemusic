@@ -28,7 +28,7 @@
       </scroll>
     </div>
     <div class="search-result" v-show="query" ref="searchResult">
-      <suggest @searchQuery="searchhistory" @listScroll="inputBlur" :query="query" ref="suggest"></suggest>
+      <suggest @searchQuery="searchhistory" @listScroll="inputBlur" :query="query" ref="suggest" :showSinger="showSinger"></suggest>
     </div>
     <router-view></router-view>
     <confirm @confirm="confirm" text="是否清空所有搜索记录？" confirmBtnText="清空" ref="confirmRef"></confirm>
@@ -44,10 +44,10 @@
   import SearchList from "base/search-list/search-list"
   import Confirm from "base/confirm/confirm"
   import Scroll from "base/scroll/scroll";
-  import {playlistMixin} from "common/js/mixin";
+  import {playlistMixin,searchMixin} from "common/js/mixin";
 
   export default {
-    mixins:[playlistMixin],
+    mixins:[playlistMixin,searchMixin],
     components: {
       Scroll,
       Confirm,
@@ -60,17 +60,13 @@
     },
     data() {
       return {
-        hotKey: [],
-        query: ''
+        hotKey: []
       }
     },
     computed: {
       shortCut(){
         return this.hotKey.concat(this.searchHistory)
-      },
-      ...mapGetters([
-        'searchHistory'
-      ])
+      }
     },
     watch:{
       /* 时机很重要：从suggest切回search页面需要重新计算高度 */
@@ -101,16 +97,6 @@
       /*deleteSearch(item){
         this.deleteSearchHistory(item)
       },*/
-      inputBlur() {
-        /* 父组件可以调用子组件的方法：滚动时派发事件让输入框失去焦点，同时：在移动端还可以让键盘收起 */
-        this.$refs.searchBox.inputblur()
-      },
-      addQuery(k) {
-        this.$refs.searchBox.setQuery(k)
-      },
-      getQuery(query) {
-        this.query = query
-      },
       _getHotKey() {
         getHotKey().then((res) => {
           if (res.code === ERR_OK) {
@@ -118,17 +104,10 @@
           }
         })
       },
-      searchhistory() {
-        this.saveSearchHistory(this.query)
-      },
       ...mapActions([
-        'saveSearchHistory',
-        'deleteSearchHistory',
         'clearSearchHistory'
       ]),
-      ...mapMutations({
-        setSearchHistory: 'SET_SEARCH_HISTORY'
-      })
+
     }
   }
 </script>
