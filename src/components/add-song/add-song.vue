@@ -13,9 +13,14 @@
       <div class="shortcut" v-show="!query">
         <switches :switches="switches" :currentIndex="currentIndex" @select="selectItem"></switches>
         <div class="list-wrapper">
-          <scroll v-if="currentIndex === 0" :data="playHistory" class="list-scroll">
+          <scroll v-if="currentIndex === 0" :data="playHistory" class="list-scroll" ref="songListRef">
             <div class="list-inner">
               <song-list @selectSong="select" :songs="playHistory"></song-list>
+            </div>
+          </scroll>
+          <scroll v-if="currentIndex === 1" :data="searchHistory" class="list-scroll" ref="searchListRef">
+            <div class="list-inner">
+              <search-list :searches="searchHistory" @selectSearch="addQuery" @deleteSearch="deleteSearchHistory"></search-list>
             </div>
           </scroll>
         </div>
@@ -23,6 +28,12 @@
       <div class="search-result" v-show="query">
         <suggest @searchQuery="searchhistory" @listScroll="inputBlur" :query="query" ref="suggest" :showSinger="showSinger"></suggest>
       </div>
+      <top-tip ref="topTip">
+        <div class="tip-title">
+          <i class="icon-ok"></i>
+          <span class="text">该歌曲已添加到播放队列</span>
+        </div>
+      </top-tip>
     </div>
   </transition>
 </template>
@@ -36,10 +47,12 @@
   import Scroll from "base/scroll/scroll";
   import SongList from "base/song-list/song-list";
   import Song from "common/js/song"
+  import SearchList from "base/search-list/search-list";
+  import TopTip from "base/top-tip/top-tip";
 
   export default {
       mixins:[searchMixin],
-      components: {SongList, Scroll, Switches, Suggest, SearchBox},
+      components: {TopTip, SearchList, SongList, Scroll, Switches, Suggest, SearchBox},
       data(){
         return{
           showFlag:false,
@@ -52,23 +65,37 @@
       },
       computed:{
         ...mapGetters([
-          'playHistory'
+          'playHistory',
+          'searchHistory'
         ])
       },
       methods:{
         select(song,index){
           if(index !== 0){
+            /* 遗留缺陷 */
             // this.insertSong(song)
+            this.showTip()
           }
         },
         show(){
           this.showFlag = true
+          /* 重新计算高度 */
+          setTimeout(()=>{
+            if(this.currentIndex === 0){
+              this.$refs.songListRef.refresh()
+            }else{
+              this.$refs.searchListRef.refresh()
+            }
+          },20)
         },
         hide(){
           this.showFlag = false
         },
         selectItem(index){
           this.currentIndex = index
+        },
+        showTip(){
+          this.$refs.topTip.show()
         },
         ...mapActions([
           'insertSong'
