@@ -1,7 +1,7 @@
 import * as types from './mutation-types'
 import {playMode} from "common/js/config";
 import {getRandomList} from "common/js/util";
-import {saveSearch, deleteSearch, clearSearch} from "common/js/cache";
+import {saveSearch, deleteSearch, clearSearch, addPlayHistory} from "common/js/cache";
 
 function getIndex(list, song) {
   return list.findIndex((item) => {
@@ -127,4 +127,9 @@ export const clearList = function ({commit,state}) {
   commit(types.SET_PLAYING,false)
   commit(types.SET_PLAYING, false)
   commit(types.SET_FULLSCREEN, false)
+}
+
+/* 添加一首歌曲播放历史 */
+export const savePlayHistory = function ({commit,state},song) {
+  commit(types.SET_PLAY_HISTORY,addPlayHistory(song))
 }

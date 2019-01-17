@@ -2,6 +2,8 @@ import storage from "good-storage"
 
 const SEARCH_KEY = '__SEARCH__'
 const MAX_LENGTH = 15
+const PLAY_KEY = '__play__'
+const MAX_PLAY_LENGTH = 200
 
 /* 排除重复值并存储 */
 function add(arr, query, compare, len) {
@@ -23,7 +25,7 @@ function add(arr, query, compare, len) {
   }
   return arr
 }
-
+/* 删除一个值 */
 function deleteOne(arr, compare) {
   let index = arr.findIndex(compare)
   if (index > -1) {
@@ -42,7 +44,7 @@ export function saveSearch(query) {
   return searches
 }
 
-/* mutation初始化获取记录 */
+/* mutation初始化搜索历史获取记录 */
 export function initialSearch() {
   return storage.get(SEARCH_KEY, [])
 }
@@ -61,3 +63,19 @@ export function clearSearch() {
   storage.set(SEARCH_KEY,[])
   return []
 }
+
+/* mutation初始化搜索历史获取记录 */
+export function initialPlay() {
+  return storage.get(PLAY_KEY,[])
+}
+
+/* 添加一播放历史到缓存 */
+export function addPlayHistory(song) {
+  let songs = storage.get(PLAY_KEY,[])
+  add(songs,song,(item)=>{
+    return item === song
+  },MAX_PLAY_LENGTH)
+  storage.set(PLAY_KEY,songs)
+  return songs
+}
+
