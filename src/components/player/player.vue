@@ -305,6 +305,7 @@
         if (lineNum > 5) {
           let lineEl = this.$refs.lyricLine[lineNum - 5]
           /* 向上偏移5个 */
+          // console.log(this.$refs.lyricList);
           this.$refs.lyricList.scrollToElement(lineEl, 1000)
         } else {
           /* 五行之内滚动到顶部 */

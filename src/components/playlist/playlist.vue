@@ -9,7 +9,7 @@
             <span class="clear" @click.stop="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <scroll ref="listContent" class="list-content" :data="sequenceList">
+        <scroll ref="listContent" class="list-content" :data="sequenceList" :refreshDelay="refreshDelay">
           <transition-group name="list" tag="ul">
             <li class="item" v-for="(item,index) in sequenceList" :key="index"
                 @click="selectItem(item,index)" ref="listRef">
@@ -53,7 +53,8 @@
     components: {Confirm, Scroll,AddSong},
     data() {
       return {
-        showFlag: false
+        showFlag: false,
+        refreshDelay:105
       }
     },
     computed: {

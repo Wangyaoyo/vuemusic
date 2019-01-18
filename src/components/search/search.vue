@@ -4,7 +4,7 @@
       <search-box @query="getQuery" ref="searchBox"></search-box>
     </div>
     <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
-      <scroll class="shortcut" :data="shortCut" ref="scroll">
+      <scroll class="shortcut" :data="shortCut" :refreshDelay="refreshDelay" ref="scroll">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -60,7 +60,8 @@
     },
     data() {
       return {
-        hotKey: []
+        hotKey: [],
+        refreshDelay: 105
       }
     },
     computed: {

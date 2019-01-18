@@ -58,6 +58,7 @@ export const modeMixin = {
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setMode: 'SET_MODE',
+      setPlaying: 'SET_PLAYING',
       setPlayList: 'SET_PLAY_LIST'
     })
   }
