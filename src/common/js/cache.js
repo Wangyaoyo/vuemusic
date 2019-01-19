@@ -73,7 +73,7 @@ export function initialPlay() {
 export function addPlayHistory(song) {
   let songs = storage.get(PLAY_KEY,[])
   add(songs,song,(item)=>{
-    return item === song
+    return item.id === song.id
   },MAX_PLAY_LENGTH)
   storage.set(PLAY_KEY,songs)
   return songs

@@ -21,7 +21,7 @@ class Song {
    * 获取歌词并返回数据
    * @returns {Promise<any>}
    */
-  getLyric() {
+  getlyric() {
     if (this.lyric) {
       return Promise.resolve(this.lyric)
     }
@@ -51,6 +51,19 @@ export function createSong(musicData) {
   })
 }
 
+/* 用于将playHistory（object）转换成Song类型 */
+export function objectToSong(obj) {
+  return new Song({
+    id:obj.id,
+    mid: obj.mid,
+    singer: obj.singer,
+    name: obj.name,
+    album: obj.album,
+    duration: obj.duration,
+    image: obj.image,
+    url: obj.url
+  })
+}
 export function processSongsUrl(songs) {
   return getSongUrl(songs).then((res) => {
     if (ERR_OK === res.code) {

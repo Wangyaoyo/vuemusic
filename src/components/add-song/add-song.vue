@@ -49,6 +49,7 @@
   import Song from "common/js/song"
   import SearchList from "base/search-list/search-list";
   import TopTip from "base/top-tip/top-tip";
+  import {createSong} from "common/js/song";
 
   export default {
       mixins:[searchMixin],
@@ -73,7 +74,7 @@
         select(song,index){
           if(index !== 0){
             /* 遗留缺陷 */
-            // this.insertSong(song)
+            this.insertSong(song)
             this.showTip()
           }
         },

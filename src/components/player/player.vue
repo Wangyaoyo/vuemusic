@@ -118,6 +118,7 @@
   import Scroll from 'base/scroll/scroll'
   import Playlist from 'components/playlist/playlist'
   import {modeMixin} from "common/js/mixin";
+  import {objectToSong} from "common/js/song";
 
   const transform = prefixName('transform')
   const transitionDuration = prefixName('transitionDuration')
@@ -128,6 +129,7 @@
         'fullScreen',
         'playing',
         'currentIndex',
+        'playHistory'
       ]),
       playClass() {
         return this.playing ? 'icon-pause' : 'icon-play'
@@ -287,7 +289,8 @@
         }
       },
       getLyric() {
-        this.currentSong.getLyric().then((lyric) => {
+        let song = objectToSong(this.currentSong);
+        song.getlyric().then((lyric) => {
           this.currentLyric = new Lyric(lyric, this.handLyric)
           if (this.playing) {
             this.currentLyric.play()
