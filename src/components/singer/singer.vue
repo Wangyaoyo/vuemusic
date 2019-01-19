@@ -80,7 +80,7 @@
             let val = map[m]
             if(val.title.match(/[a-zA-Z]/)){
               ret.push(val)
-            }else{
+            }else if(val.title.match(/[热门]/)){
               hot.push(val)
             }
           }
