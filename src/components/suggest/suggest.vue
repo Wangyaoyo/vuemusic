@@ -118,9 +118,7 @@
 
         getSearchSong(this.query, this.page, this.showSinger, pageNum).then((res) => {
           if (res.code === ERR_OK) {
-            // console.log(res.data);
             this.result = this.result.concat(this._genResult(res.data))
-            // console.log(this.result);
             this._checkMore(res.data)
           }
         })
@@ -143,15 +141,9 @@
           ret.push({...data.zhida, ...{type: TYPE_SINGER}})
         }
         if (data.song) {
-          // let list = data.song.list.slice(1)
-          /*processSongsUrl(this._normalizeSong(list)).then((songs) => {
-            this.songs = songs
-          })*/
-          // console.log(this.songs);
-          ret = ret.concat(this._normalizeSong(data.song.list))
-          // ret = ret.concat(songs)
+          let list = data.song.list.slice(1)
+          ret = ret.concat(this._normalizeSong(list))
         }
-        // console.log(ret);
         return ret
       },
       _normalizeSong(list) {
@@ -161,7 +153,9 @@
             ret.push(createSong(musicData))
           }
         })
-        // console.log(ret);
+        processSongsUrl(ret).then((songs) => {
+            this.songs = songs
+        })
         return ret
       },
       ...mapMutations({
