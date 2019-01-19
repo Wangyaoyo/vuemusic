@@ -1,13 +1,15 @@
 <template>
-	<div class="header">
+  <div class="header">
     <div class="icon"></div>
     <h1 class="text">Chicken Music</h1>
+    <router-link class="mine" tag="div" to="/user">
+      <i class="icon-mine"></i>
+    </router-link>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-    export default {
-    }
+  export default {}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -32,4 +34,13 @@
       display inline-block
       font-size $font-size-large
       line-height 44px
+    .mine
+      position: absolute
+      top: 0
+      right: 0
+      .icon-mine
+        display: block
+        padding: 12px
+        font-size: 20px
+        color: $color-theme
 </style>
