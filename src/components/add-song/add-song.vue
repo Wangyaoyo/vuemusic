@@ -73,7 +73,6 @@
       methods:{
         select(song,index){
           if(index !== 0){
-            /* 遗留缺陷 */
             this.insertSong(song)
             this.showTip()
           }
