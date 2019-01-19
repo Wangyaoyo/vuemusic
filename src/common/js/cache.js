@@ -2,8 +2,10 @@ import storage from "good-storage"
 
 const SEARCH_KEY = '__SEARCH__'
 const MAX_LENGTH = 15
-const PLAY_KEY = '__play__'
+const PLAY_KEY = '__PLAY__'
 const MAX_PLAY_LENGTH = 200
+const FAVORITE_KEY = '__FAVORITE__'
+const MAX_FAVORITE_LENGTH = 200
 
 /* 排除重复值并存储 */
 function add(arr, query, compare, len) {
@@ -79,3 +81,27 @@ export function addPlayHistory(song) {
   return songs
 }
 
+/* 初始化我的喜欢 */
+export function initialFavorite() {
+  return storage.get(FAVORITE_KEY,[])
+}
+
+/* 添加一首歌曲到我的喜欢 */
+export function addFavorite(song) {
+  let favorites = storage.get(FAVORITE_KEY,[])
+  add(favorites,song,(item)=>{
+    return song.id === item.id
+  },MAX_FAVORITE_LENGTH)
+  storage.set(FAVORITE_KEY,favorites)
+  return favorites
+}
+
+/* 删除一首歌曲从我的喜欢 */
+export function removeFavorite(song) {
+  let favorites = storage.get(FAVORITE_KEY,[])
+  deleteOne(favorites,(item)=>{
+    return song.id === item.id
+  })
+  storage.set(FAVORITE_KEY,favorites)
+  return favorites
+}

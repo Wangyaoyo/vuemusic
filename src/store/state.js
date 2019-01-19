@@ -1,6 +1,6 @@
 /*  1 首先定义state  */
 import {playMode} from "common/js/config";
-import {initialSearch,initialPlay} from "common/js/cache";
+import {initialSearch,initialPlay,initialFavorite} from "common/js/cache";
 
 const state = {
   singer: {},
@@ -13,7 +13,8 @@ const state = {
   disc: {},
   topList: [],
   searchHistory: initialSearch(),
-  playHistory: initialPlay()
+  playHistory: initialPlay(),
+  favorite: initialFavorite()
 }
 
 export default state

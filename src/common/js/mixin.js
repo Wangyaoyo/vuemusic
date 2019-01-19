@@ -36,7 +36,8 @@ export const modeMixin = {
       'sequenceList',
       'currentSong',
       'mode',
-      'playList'
+      'playList',
+      'favorite'
     ])
   },
   methods: {
@@ -55,12 +56,35 @@ export const modeMixin = {
       this.setCurrentIndex(index)
       this.setPlayList(list)
     },
+    toggleFavorite(song){
+      if(this.isFavorite(song)){
+        this.deleteFavorite(song)
+      }else{
+        this.saveFavorite(song)
+      }
+    },
+    getFavoriteIcon(song){
+      if(this.isFavorite(song)){
+        return 'icon-favorite'
+      }
+      return 'icon-not-favorite'
+    },
+    isFavorite(song){
+      const index = this.favorite.findIndex((item)=>{
+        return item.id === song.id
+      })
+      return index > -1
+    },
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setMode: 'SET_MODE',
       setPlaying: 'SET_PLAYING',
       setPlayList: 'SET_PLAY_LIST'
-    })
+    }),
+    ...mapActions([
+      'saveFavorite',
+      'deleteFavorite'
+    ])
   }
 }
 /* 搜索框及搜索结果逻辑的mixin */
