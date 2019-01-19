@@ -54,7 +54,7 @@
         this.setTopList(item)
       },
       handlePlaylist(playlist) {
-        const bottom = playlist.length > 0 ? '60' : ''
+        const bottom = playlist.length > 0 ? '60' : '0'
         this.$refs.rank.style.bottom = `${bottom}px`
         this.$refs.scroll.refresh()
       },

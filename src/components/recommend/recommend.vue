@@ -65,7 +65,7 @@
         this.setDisc(disc)
       },
       handlePlaylist(playlist){
-        const bottom = playlist.length > 0 ? '60': ''
+        const bottom = playlist.length > 0 ? '60': '0'
         this.$refs.recommend.style['bottom'] = `${bottom}px`
         this.$refs.scroll.refresh()
       },

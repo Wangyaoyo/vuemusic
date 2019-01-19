@@ -28,7 +28,7 @@
       methods:{
         handlePlaylist(playlist){
           /* 添加bottom属性重新计算高度 */
-          const bottom = playlist.length > 0 ? '60': ''
+          const bottom = playlist.length > 0 ? '60': '0'
           this.$refs.singer.style.bottom = `${bottom}px`
           this.$refs.listView.refresh()
         },

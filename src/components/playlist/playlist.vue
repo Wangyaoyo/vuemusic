@@ -67,7 +67,6 @@
         if (!this.showFlag || oldSong.id === newSong.id) {
           return
         }
-        this.scrollToCurrent(newSong)
       },
     },
     methods: {
