@@ -49,7 +49,7 @@
   import Song from "common/js/song"
   import SearchList from "base/search-list/search-list";
   import TopTip from "base/top-tip/top-tip";
-  import {createSong} from "common/js/song";
+  import {objectToSong} from "common/js/song";
 
   export default {
       mixins:[searchMixin],
@@ -73,7 +73,7 @@
       methods:{
         select(song,index){
           if(index !== 0){
-            this.insertSong(song)
+            this.insertSong(objectToSong(song))
             this.showTip()
           }
         },

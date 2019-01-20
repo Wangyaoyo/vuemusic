@@ -93,7 +93,7 @@
       },
       selectSong(song,index){
         if(index >= 0){
-          this.insertSong(song)
+          this.insertSong(objectToSong(song))
         }
       },
       handlePlaylist(playList){

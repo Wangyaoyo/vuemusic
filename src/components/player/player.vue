@@ -100,7 +100,7 @@
       </div>
     </transition>
     <Playlist ref="playlistRef"></Playlist>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime"
+    <audio ref="audio" :src="currentSong.url" @play="ready" @error="error" @timeupdate="updateTime"
            @ended="endSong"></audio>
     <!--end/迷你播放器-->
   </div>
@@ -176,7 +176,8 @@
           return
         }
         /* 使用setTimeout 而不是 nextTick的原因：保证微信从后台切到前台的时候歌曲可以重新播放？？？*/
-        setTimeout(() => {
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
           this.$refs.audio.play()
           this.getLyric();
         }, 1000)
@@ -211,6 +212,7 @@
         /* 防止currentSong不变化歌词不会执行stop()*/
         if (this.playList.length === 1) {
           this.loop()
+          return
         } else {
           let index = this.currentIndex - 1
           if (index === -1) {
@@ -229,6 +231,7 @@
         }
         if (this.playList.length === 1) {
           this.loop()
+          return
         } else {
           let index = this.currentIndex + 1
           if (index === this.playList.length - 1) {
@@ -289,8 +292,11 @@
         }
       },
       getLyric() {
-        let song = objectToSong(this.currentSong);
-        song.getlyric().then((lyric) => {
+        this.currentSong.getlyric().then((lyric) => {
+          /* 防止歌词抖动 */
+          if(this.currentSong.lyric !== lyric){
+            return
+          }
           this.currentLyric = new Lyric(lyric, this.handLyric)
           if (this.playing) {
             this.currentLyric.play()
