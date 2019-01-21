@@ -7,12 +7,16 @@ import store from './store'
 import FastClick from 'fastclick'
 import Lazyload from 'vue-lazyload'
 
+/* 引入移动端调试库 */
+import vConsole from 'vconsole'
+let vconsole = new vConsole()
+console.log('我是console')
+
 Vue.config.productionTip = false
 /* 解决移动端点击300毫秒延迟问题 */
 FastClick.attach(document.body);
 /* 引入总体样式 */
 import 'common/stylus/index.styl'
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -21,7 +25,6 @@ new Vue({
   store,
   render: h => h(App)
 })
-
 /* 懒加载模块：Vue 的第三方插件都要use()*/
 Vue.use(Lazyload,{
   /* require加载图片路径 */
