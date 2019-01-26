@@ -10,7 +10,7 @@ import Lazyload from 'vue-lazyload'
 /* 引入移动端调试库 */
 import vConsole from 'vconsole'
 let vconsole = new vConsole()
-console.log('我是console')
+console.log('我是vConsole')
 
 Vue.config.productionTip = false
 /* 解决移动端点击300毫秒延迟问题 */
@@ -20,9 +20,12 @@ import 'common/stylus/index.styl'
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  /* 注入路由和状态管理 */
   router,
-  /* 注入store */
   store,
+  /* ES6语法：通过render函数渲染dom树，挂载到el上 */
+  /*Vue 在调用 render 方法时，会传入一个 createElement 函数作为参数，
+  也就是这里的 h 的实参是 createElement 函数，然后 createElement 会以 APP 为参数进行调用*/
   render: h => h(App)
 })
 /* 懒加载模块：Vue 的第三方插件都要use()*/
