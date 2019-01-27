@@ -7,8 +7,9 @@ const debug = process.env.NODE_ENV !== 'production'
 
 /* 歌曲url获取 */
 export function getSongUrl(songs) {
-  // const url = debug ? '/api/getPurlUrl' : 'http://usthuangyi.com/music/api/music/api/getPurlUrl'
-  const url = '/api/getPurlUrl'
+  /* 线上地址 */
+  const url = debug ? '/api/getPurlUrl' : 'http://39.105.52.64/music/api/music/api/getPurlUrl'
+
   let mids = []
   let types = []
 
