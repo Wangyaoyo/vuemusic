@@ -8,7 +8,7 @@ const debug = process.env.NODE_ENV !== 'production'
 /* 歌曲url获取 */
 export function getSongUrl(songs) {
   /* 线上地址 */
-  const url = debug ? '/api/getPurlUrl' : 'http://39.105.52.64/music/api/music/api/getPurlUrl'
+  const url = debug ? '/api/getPurlUrl' : 'http://39.105.52.64/music/api/getPurlUrl'
 
   let mids = []
   let types = []
@@ -36,7 +36,7 @@ export function getSongUrl(songs) {
 
 /* 歌曲歌词获取 */
 export function getLyric(mid) {
-  const url = '/api/lyric'
+  const url = debug ? '/api/lyric': 'http://39.105.52.64/music/api/lyric'
 
   const data = Object.assign({}, commonParam, {
     platform: 'yqq',
