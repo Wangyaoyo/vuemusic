@@ -8,7 +8,16 @@
     </div>
   </div>
 </template>
-
+<!-- 笔记 -->
+<!-- 1、导入轮播图的组件 使用v-if确保dom的渲染在获取数据之后 -->
+<!-- 2、浏览器窗口改变时 设置标志位避免宽度多次相加 -->
+<!-- 3、mounted钩子一般结合setTimeout使用，确保浏览器刷新后初始化 -->
+<!-- 思路：
+      配置轮播图的重要参数：自动轮播、循环轮播、轮播时间
+      初始化：计算宽度（轮播图父容器、子的宽度）、dot初始化、scroll初始化
+      监听事件：每滑到一页结束，是自动播放就自己计算页数并利用定时器滑到下一页
+      学会理解业务的同时思考代码的实现
+-->
 <script type="text/ecmascript-6">
     import {addClass} from "common/js/dom";
     import BScroll from "better-scroll"
