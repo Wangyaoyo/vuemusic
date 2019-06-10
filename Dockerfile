@@ -1,3 +1,5 @@
+# 使用Daocloud做持续集成，登录时直接使用github授权登录就行了
+
 FROM keymetrics/pm2:latest-alpine
 
 MAINTAINER xiaotian
