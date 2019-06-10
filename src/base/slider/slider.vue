@@ -127,6 +127,7 @@
             }
           })
 
+          /* 手动拖动才触发的事件 ：在手动拖动之前，清空计时器 */
           this.slider.on('beforeScrollStart',() => {
             if(this.autoPlay){
               clearTimeout(this.timer)
