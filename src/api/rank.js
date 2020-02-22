@@ -6,7 +6,7 @@ const debug = process.env.NODE_ENV !== 'production'
 
 /* 排行榜 */
 export function getTopList() {
-  const url = debug ? '/api/getTopList' : 'http://39.105.52.64/music/api/getTopList'
+  const url = '/api/getTopList'
 
   const data = Object.assign({},commonParam,{
     uin: 0,
@@ -25,7 +25,7 @@ export function getTopList() {
 }
 /* 排行榜详情 */
 export function getTopListDetail(topid) {
-  const url = debug ? '/api/getTopListDetail': 'http://39.105.52.64/music/api/getTopListDetail'
+  const url = '/api/getTopListDetail'
 
   const data = Object.assign({},commonParam,{
     uin: 0,

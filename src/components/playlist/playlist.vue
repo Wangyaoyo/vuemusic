@@ -11,7 +11,7 @@
         </div>
         <scroll ref="listContent" class="list-content" :data="sequenceList" :refreshDelay="refreshDelay">
           <transition-group name="list" tag="ul">
-            <li class="item" v-for="(item,index) in sequenceList" :key="index"
+            <li class="item" v-for="(item,index) in sequenceList" :key="item.id"
                 @click="selectItem(item,index)" ref="listRef">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>

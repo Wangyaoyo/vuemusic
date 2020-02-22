@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="icon"></div>
-    <h1 class="text">Chicken Music</h1>
+    <h1 class="text">Yaoyao Music</h1>
     <router-link class="mine" tag="div" to="/user">
       <i class="icon-mine"></i>
     </router-link>

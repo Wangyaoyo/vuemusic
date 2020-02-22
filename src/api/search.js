@@ -6,7 +6,7 @@ const debug = process.env.NODE_ENV !== 'production'
 
 /* 热门歌曲 */
 export function getHotKey() {
-  const url = debug ? '/api/getHotKey': 'http://39.105.52.64/music/api/getHotKey'
+  const url = '/api/getHotKey'
 
   const data = Object.assign({}, commonParam, {
     uin: 0,
@@ -25,7 +25,7 @@ export function getHotKey() {
 
 /* 搜索歌曲 */
 export function getSearchSong(query,page,zhida,pagenum) {
-  const url = debug ? '/api/getSearchSong': 'http://39.105.52.64/music/api/getSearchSong'
+  const url = '/api/getSearchSong'
 
   const data = Object.assign({}, commonParam, {
     uin: 0,

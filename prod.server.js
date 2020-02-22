@@ -33,7 +33,8 @@ apiRoutes.get('/api/getDiscList', function (req, res) {
 /* 歌曲url */
 apiRoutes.post('/api/getPurlUrl',bodyParser.json(),function (req,res) {
   const url = 'http://u.y.qq.com/cgi-bin/musicu.fcg'
-  axios.post(url,req.body,{
+  axios.post(url, req.body,{
+    timeout: 0,
     headers:{
       referer:'https://y.qq.com',
       origin:'https://y.qq.com',

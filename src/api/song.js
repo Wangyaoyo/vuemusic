@@ -8,7 +8,7 @@ const debug = process.env.NODE_ENV !== 'production'
 /* 歌曲url获取 */
 export function getSongUrl(songs) {
   /* 线上地址 */
-  const url = debug ? '/api/getPurlUrl' : 'http://39.105.52.64/music/api/getPurlUrl'
+  const url = '/api/getPurlUrl'
 
   let mids = []
   let types = []
@@ -29,6 +29,8 @@ export function getSongUrl(songs) {
   return axios.post(url, {
     comm: data,
     url_mid: genUrlMid(mids, types)
+  }, {
+    timeout: 0
   }).then((res) => {
     return Promise.resolve(res.data)
   })
@@ -36,7 +38,7 @@ export function getSongUrl(songs) {
 
 /* 歌曲歌词获取 */
 export function getLyric(mid) {
-  const url = debug ? '/api/lyric': 'http://39.105.52.64/music/api/lyric'
+  const url = '/api/lyric'
 
   const data = Object.assign({}, commonParam, {
     platform: 'yqq',

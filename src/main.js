@@ -8,8 +8,8 @@ import FastClick from 'fastclick'
 import Lazyload from 'vue-lazyload'
 
 /* 引入移动端调试库 */
-import vConsole from 'vconsole'
-let vconsole = new vConsole()
+// import vConsole from 'vconsole'
+// let vconsole = new vConsole()
 
 Vue.config.productionTip = false
 /* 解决移动端点击300毫秒延迟问题 */

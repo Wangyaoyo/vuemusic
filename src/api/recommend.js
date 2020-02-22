@@ -18,7 +18,7 @@ export function getRecommend() {
 
 /* 获取歌单列表 */
 export function getDiscList() {
-  const url =debug ? '/api/getDiscList': 'http://39.105.52.64/music/api/getDiscList'
+  const url = '/api/getDiscList'
 
   const data = Object.assign({}, commonParam, {
     platform: 'yqq',
@@ -41,7 +41,7 @@ export function getDiscList() {
 
 /* 获取歌单歌曲列表 */
 export function getDiscSong(dissid) {
-  const url = debug ? '/api/getDiscSong': 'http://39.105.52.64/music/api/getDiscSong'
+  const url = '/api/getDiscSong'
 
   const data = Object.assign({}, commonParam, {
     platform: 'yqq.json',
