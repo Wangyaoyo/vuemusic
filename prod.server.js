@@ -5,6 +5,7 @@ var axios = require('axios')
 var bodyParser = require('body-parser')
 
 var apiRoutes = express.Router()
+var app = express()
 
 /* 用来解析req.body的数据 解析成功覆盖原来的req.body,解析失败则为{} */
 /* extend选项用来配置使用querystring(false)或qs(true)来解析数据*/
@@ -150,7 +151,6 @@ app.use('/',apiRoutes)
   生产环境：端口启动于9000
  */
 var port = process.env.PORT || config.build.port
-var app = express()
 
 /* Express框架：提供了static中间件来设置静态文件的资源 */
 app.use(express.static('./dist'))
