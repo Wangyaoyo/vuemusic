@@ -3,10 +3,6 @@ var express = require('express')
 // var config = require('./config/index')
 var axios = require('axios')
 var bodyParser = require('body-parser')
-/* process是全局变量无需引入 */
-var port = 80
-
-var app = express()
 
 var apiRoutes = express.Router()
 
@@ -144,6 +140,17 @@ apiRoutes.get('/api/getSearchSong', function (req, res) {
   })
 })
 app.use('/',apiRoutes)
+
+
+// var port = 80
+
+/*
+设置服务启动在哪个端口（process是全局变量无需引入）
+  开发环境：端口启动于4000
+  生产环境：端口启动于9000
+ */
+var port = process.env.PORT || config.build.port
+var app = express()
 
 /* Express框架：提供了static中间件来设置静态文件的资源 */
 app.use(express.static('./dist'))
