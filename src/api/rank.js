@@ -25,7 +25,7 @@ export function getTopList() {
 }
 /* 排行榜详情 */
 export function getTopListDetail(topid) {
-  const url = '/api/getTopListDetail'
+  const url = debug ? '/api/getTopListDetail': 'http://39.105.52.64/music/api/getTopListDetail'
 
   const data = Object.assign({},commonParam,{
     uin: 0,
