@@ -76,7 +76,10 @@ export function processSongsUrl(songs) {
         })
       }
     }
-    return songs
+    // 过滤掉song.url无效的歌曲
+    return songs.filter(song => {
+      return !/^http:\/\/dl.stream.qqmusic.qq.com\/$/.test(song.url)
+    })
   })
 }
 /* 过滤得到歌手名称 */
